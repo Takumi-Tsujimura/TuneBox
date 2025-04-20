@@ -1,0 +1,23 @@
+<div>
+    <div>
+        <% if @notice %>
+            <p style="color: green;"><%= @notice %></p>
+        <% end %>
+    </div>
+    <div>
+        <form method="POST" action="/login">
+            <div>
+                <div>
+                    <label for="mail">メールアドレス</label>
+                    <input type="email" name="mail" id="mail" required>
+                </div>
+                <div>
+                    <label for="password">パスワード</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                <button type="submit">ログイン</button>
+                <a href="/logup_form">新規登録</a>
+            </div>
+        </form>
+    </div>
+</div>

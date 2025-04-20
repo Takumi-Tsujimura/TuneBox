@@ -1,0 +1,51 @@
+<div class="px-3" style="margin-top: 30px;">
+  <div> 
+    <% @items.each do |item| %>
+      <div class="card mb-4" style="max-width: 720px;">
+        <div class="row g-0 align-items-center flex-nowrap">
+          <!-- 左：画像（スマホでも col-4） -->
+          <div class="col-4">
+            <img src="<%= item["album"]["images"][0]["url"] %>" class="img-fluid rounded-start w-100" style="height: 100%; object-fit: cover;" alt="album image">
+          </div>
+          <!-- 右：情報（col-8でスマホでも横並び維持） -->
+          <div class="col-8">
+            <div class="card-body p-2">
+              <h6 class="card-title mb-1">曲名: <%= item["name"] %></h6>
+              <p class="card-text mb-1" style="font-size: 0.9rem;">
+                <% item["artists"].each do |artist| %>
+                  アーティスト：<%= artist["name"] %><br>
+                <% end %>
+              </p>
+              <input type="hidden" id="track_id" name="track_id" value="<%= item["id"] %>">
+              <div class="text-end">
+                <button
+                  class="btn btn-sm btn-primary"
+                  onclick="openPopup('<%= item["name"] %>', '<%= item["album"]["images"][2]["url"] %>', '<%= item["artists"].map { |artist| artist["name"] }.join(", ") %>', '<%= item["id"] %>')"
+                  data-name="<%= item["name"] %>" 
+                  data-image="<%= item["album"]["images"][2]["url"] %>" 
+                  data-artists="<%= item["artists"].map { |artist| artist["name"] }.join(", ") %>"
+                  data-id="<%= item["id"] %>"
+                >
+                  リクエスト
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+     <!--モーダル (ポップアップ) の部分 -->
+    <div id="modal" class="modal">
+        <form method="POST" action="/submit_request/<%= @form.id %>">
+            <div class="modal-content">
+                <span class="close" onclick="closePopup()">&times;</span>
+                <div id="track-info"></div>
+                <div id="formContent"></div> <!-- ここにreq_form.erbが埋め込まれる -->
+                <button type="submit">送信</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="/js/main.js"></script>
