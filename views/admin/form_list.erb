@@ -1,53 +1,53 @@
 <div>
-    <form method="GET" action="/form_templates/new">
-        <button type="submit">新規作成</button>
-    </form>
+  <form method="GET" action="/form_templates/new">
+    <button type="submit">新規作成</button>
+  </form>
 </div>
 <div>
-    <!--<% unless session[:user] %>-->
-    <!--    <form method="GET" action="/auth">-->
-    <!--        <button>ログイン</button>-->
-    <!--    </form>-->
-    <!--<% else %>-->
-        <!--<p>ログイン済み: <%= session[:user][:name] %></p>-->
-        <!--<form method="GET" action="/logout">-->
-        <!--    <button>ログアウト</button>-->
-        <!--</form>-->
-    <!--<% end %>-->
+  <!--<% unless session[:user] %>-->
+  <!--    <form method="GET" action="/auth">-->
+  <!--        <button>ログイン</button>-->
+  <!--    </form>-->
+  <!--<% else %>-->
+  <!--<p>ログイン済み: <%= session[:user][:name] %></p>-->
+  <!--<form method="GET" action="/logout">-->
+  <!--    <button>ログアウト</button>-->
+  <!--</form>-->
+  <!--<% end %>-->
 </div>
 <div>
-    <ul>
-        <div>
-            <% @forms.each do |form| %>
-                <li>
-                    <% today_deadline = Time.new(Time.now.year, Time.now.month, Time.now.day) %>
-                    <h4 name="form_name"><%= form.form_name %></h4>
-                    <input type="hidden" value="<%= form.playlist_id %>" name="playlist_id">
-                    <p name="created_at">作成日：<%= form.created_at.strftime("%Y-%m-%d %H:%M") %></p>
-                    <p name="deadline">期限：
-                      　<% if form.deadline.nil? || form.deadline.to_s.strip.empty? %>
-                            なし
-                      　<% elsif form.deadline < today_deadline %>
-                            期限切れ
-                      　<% else %>
-                            <%= form.deadline %>
-                      　<% end %>
-                    </p>
-                    <form method="GET" action="/forms/<%= form.id %>/edit"> 
-                        <button type="submit">編集</button>
-                    </form>
-                    <form method="POST" action="/forms/<%= form.id %>">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <input type="submit" value="削除">
-                    </form>
-                    <% if form.deadline.nil? || form.deadline >= today_deadline %>
-                        <form method="GET" action="/form/<%= form.id %>">
-                            <button type="submit">フォームを開く</button>
-                        </form>
-                    <% end %>
-                    <button>リンクをコピー</button>
-                </li>
-            <% end %>
-        </div>
-    </ul>
+  <ul>
+    <div>
+      <% @forms.each do |form| %>
+        <li>
+          <% today_deadline = Time.new(Time.now.year, Time.now.month, Time.now.day) %>
+            <h4 name="form_name"><%= form.form_name %></h4>
+            <input type="hidden" value="<%= form.playlist_id %>" name="playlist_id">
+            <p name="created_at">作成日：<%= form.created_at.strftime("%Y-%m-%d %H:%M") %></p>
+            <p name="deadline">期限：
+              <% if form.deadline.nil? || form.deadline.to_s.strip.empty? %>
+                なし
+              <% elsif form.deadline < today_deadline %>
+                期限切れ
+              <% else %>
+                <%= form.deadline %>
+              <% end %>
+            </p>
+            <form method="GET" action="/forms/<%= form.id %>/edit"> 
+              <button type="submit">編集</button>
+            </form>
+            <form method="POST" action="/forms/<%= form.id %>">
+              <input type="hidden" name="_method" value="DELETE">
+              <input type="submit" value="削除">
+            </form>
+            <% if form.deadline.nil? || form.deadline >= today_deadline %>
+            <form method="GET" action="/form/<%= form.id %>">
+              <button type="submit">フォームを開く</button>
+            </form>
+          <% end %>
+          <button>リンクをコピー</button>
+        </li>
+      <% end %>
+    </div>
+  </ul>
 </div>
