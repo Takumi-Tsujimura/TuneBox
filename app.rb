@@ -252,13 +252,43 @@ post '/submit_request/:id' do
   track_id = params[:track_id]
 
   return "エラー: トラックIDが指定されていません" if track_id.nil? || track_id.strip.empty?
-
+  
   form_owner = @form.user
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
-
+  
   token = form_owner.spotify_access_token
   return "エラー: このフォームの管理者がSpotifyにログインしていません" if token.nil? || token.empty?
+  
+  playlist_uri = URI("https://api.spotify.com/v1/playlists/#{@form.playlist_id}/tracks?fields=items(track(id)),next&limit=100")
+  headers = { 'Authorization' => "Bearer #{token}" }
+  
+  duplicate_found = false
+  loop do
+    req = Net::HTTP::Get.new(playlist_uri, headers)
+    res = Net::HTTP.start(playlist_uri.hostname, playlist_uri.port, use_ssl: true) { |http| http.request(req) }
 
+    unless res.is_a?(Net::HTTPSuccess)
+      return "Spotify APIエラー（取得失敗）: #{res.code} - #{res.body}"
+    end
+
+    body = JSON.parse(res.body)
+    track_ids = body["items"].map { |item| item.dig("track", "id") }
+    if track_ids.include?(track_id)
+      duplicate_found = true
+      break
+    end
+
+    next_url = body["next"]
+    break unless next_url
+    playlist_uri = URI(next_url)
+  end
+
+  if duplicate_found
+    session[:success_message] = "リクエストが完了しました"
+    redirect "/form/#{params[:id]}"
+  end
+
+  # 追加処理
   uri = URI("https://api.spotify.com/v1/playlists/#{@form.playlist_id}/tracks")
   request_body = {
     "uris" => ["spotify:track:#{track_id}"],
@@ -279,8 +309,6 @@ post '/submit_request/:id' do
     "Spotify APIエラー: #{res.code} - #{res.body}"
   end
 end
-
-
 
 get '/admin' do
   # @forms = Form.all
@@ -387,8 +415,6 @@ delete '/forms/:id' do
   form.destroy
   redirect '/admin'
 end
-
-
 
 get '/login_form' do
   @notice = session.delete(:notice)
