@@ -16,7 +16,11 @@
                   アーティスト：<%= artist["name"] %><br>
                 <% end %>
               </p>
-              <input type="hidden" id="track_id" name="track_id" value="<%= item["id"] %>">
+              <div>
+                <input type="hidden" id="track_id" name="track_id" value="<%= item["id"] %>">
+                <input type="hidden" name="track_name" value="<%= item["name"] %>">
+                <input type="hidden" name="track_artists" value="<%= item["artists"].map { |a| a["name"] }.join(', ') %>">
+              </div>
               <div class="text-end">
                 <button
                   class="btn btn-sm btn-primary"

@@ -249,8 +249,11 @@ end
 
 post '/submit_request/:id' do
   @form = Form.find(params[:id])
+  user_name = params[:user_name]
+  track_name = params[:track_name]
+  track_artists = params[:track_artists]
   track_id = params[:track_id]
-
+  
   return "エラー: トラックIDが指定されていません" if track_id.nil? || track_id.strip.empty?
   
   form_owner = @form.user
@@ -284,6 +287,15 @@ post '/submit_request/:id' do
   end
 
   if duplicate_found
+    request = Request.create(
+      form_id: @form.id.to_s,
+      user_name: user_name,
+      track_name: track_name,
+      track_artists: track_artists,
+      track_id: track_id
+    )
+    puts "=== リクエスト保存 ==="
+    puts request.inspect
     session[:success_message] = "リクエストが完了しました"
     redirect "/form/#{params[:id]}"
   end
@@ -303,6 +315,16 @@ post '/submit_request/:id' do
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
   if res.is_a?(Net::HTTPSuccess)
+    request = Request.create(
+      form_id: @form.id.to_s,
+      user_name: user_name,
+      track_name: track_name,
+      track_artists: track_artists,
+      track_id: track_id
+    )
+    puts "=== リクエスト保存 ==="
+    puts request.inspect
+
     session[:success_message] = "リクエストが完了しました"
     redirect "/form/#{params[:id]}"
   else
@@ -460,4 +482,10 @@ post '/admin/delete_all_users' do
   User.delete_all
   Form.delete_all
   "全ユーザーを削除しました"
+end
+
+get '/request_log/:id' do
+  @form_id = params[:id]
+  @requests = Request.where(form_id: @form_id).order(created_at: :desc)
+  erb :'admin/request_log', layout: :'admin/layout'
 end

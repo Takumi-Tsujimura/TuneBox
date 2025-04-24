@@ -23,3 +23,7 @@ class User < ActiveRecord::Base
   # spotify_refresh_token :string
   # spotify_expires_at :datetime
 end
+
+class Request < ActiveRecord::Base
+  
+end

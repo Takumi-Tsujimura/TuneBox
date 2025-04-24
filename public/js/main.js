@@ -4,6 +4,8 @@ function openPopup(trackName, trackImage, trackArtists, trackId) {
     document.getElementById('track-info').innerHTML = `
         <h3>曲名: ${trackName}</h3>
         <input id="track_id" name="track_id" value="${trackId}" type="hidden">
+        <input id="track_name" name="track_name" value="${trackName}" type="hidden">
+        <input id="track_artists" name="track_artists" value="${trackArtists}" type="hidden">
         <p>アーティスト: ${trackArtists}</p>
         <img src="${trackImage}" alt="${trackName}" style="width: 100px; height: 100px;">
       `;

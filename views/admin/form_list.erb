@@ -44,7 +44,11 @@
             <form method="GET" action="/form/<%= form.id %>">
               <button type="submit">フォームを開く</button>
             </form>
+           
           <% end %>
+          <form method="GET" action="/request_log/<%= form.id %>">
+            <button type="submit">リクエスト履歴</button>
+          </form>
           <button>リンクをコピー</button>
         </li>
       <% end %>

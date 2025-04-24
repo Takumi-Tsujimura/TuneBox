@@ -1,0 +1,17 @@
+<h2>リクエストログ（フォームID: <%= @form_id %>）</h2>
+
+<% if @requests.empty? %>
+  <p>まだリクエストはありません。</p>
+<% else %>
+  <ul style="list-style-type: none; padding: 0;">
+    <% @requests.each do |r| %>
+      <li style="border: 1px solid #ccc; border-radius: 6px; padding: 10px; margin-bottom: 10px;">
+        <strong>日時:</strong> <%= r.created_at.strftime("%Y-%m-%d %H:%M") %><br>
+        <strong>名前:</strong> <%= r.user_name %><br>
+        <strong>曲名:</strong> <%= r.track_name %><br>
+        <strong>アーティスト:</strong> <%= r.track_artists %><br>
+        <strong>トラックID:</strong> <%= r.track_id %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
