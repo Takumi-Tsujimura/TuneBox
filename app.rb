@@ -489,3 +489,40 @@ get '/request_log/:id' do
   @requests = Request.where(form_id: @form_id).order(created_at: :desc)
   erb :'admin/request_log', layout: :'admin/layout'
 end
+
+post '/track_delete' do
+  form_id = params[:form_id]
+  track_id = params[:track_id]
+
+  form = Form.find(form_id)
+  playlist_id = form.playlist_id
+
+  form_owner = form.user  # ← 修正ポイント
+  refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
+
+  token = form_owner.spotify_access_token
+  return "エラー: このフォームの管理者がSpotifyにログインしていません" if token.nil? || token.empty?
+
+  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks")
+
+  request_body = {
+    "tracks" => [
+      { "uri" => "spotify:track:#{track_id}" }
+    ]
+  }.to_json
+
+  req = Net::HTTP::Delete.new(uri)
+  req['Authorization'] = "Bearer #{token}"
+  req['Content-Type'] = 'application/json'
+  req.body = request_body
+
+  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+
+  if res.is_a?(Net::HTTPSuccess)
+    request = Request.find_by(form_id: form_id, track_id: track_id)
+    request.destroy if request
+    redirect "/request_log/#{form_id}"
+  else
+    "Spotify APIエラー: #{res.code} - #{res.body}"
+  end
+end
