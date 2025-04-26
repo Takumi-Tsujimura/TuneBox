@@ -1,19 +1,57 @@
+<style>
+  #menu {
+    position: fixed;
+    top: 0;
+    right: -250px; /* 最初は画面の外に隠す */
+    width: 250px;
+    height: 100%;
+    background-color: white;
+    border-left: 1px solid #ccc;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+    padding: 20px;
+    transition: right 0.3s; /* なめらかに動かす */
+    z-index: 999; /* ボタンより下にする */
+  }
+  
+  #menu.open {
+    right: 0;
+  }
+  
+  /* ここからボタンのスタイル！ */
+  #menuButton {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000; /* メニューより上に出す */
+    transition: right 0.3s; /* これをつける！ */
+  }
+  
+  /* メニューが開いたら、ボタンも動かす */
+  .menu-open #menuButton {
+    right: 270px; /* メニューの幅(250px)＋ちょっと余裕20px */
+  }
+</style>
+
 <div>
   <form method="GET" action="/form_templates/new">
     <button type="submit">新規作成</button>
   </form>
 </div>
 <div>
-  <!--<% unless session[:user] %>-->
-  <!--    <form method="GET" action="/auth">-->
-  <!--        <button>ログイン</button>-->
-  <!--    </form>-->
-  <!--<% else %>-->
-  <!--<p>ログイン済み: <%= session[:user][:name] %></p>-->
-  <!--<form method="GET" action="/logout">-->
-  <!--    <button>ログアウト</button>-->
-  <!--</form>-->
-  <!--<% end %>-->
+  <div>
+  <!-- ハンバーガーボタン -->
+  <button id="menuButton">☰</button>
+
+  <!-- スライドメニュー -->
+  <div id="menu">
+    <form method="GET" action="/user/edit">
+      <button type="submit">ユーザー設定編集</button>
+    </form>
+    <form method="POST" action="/logout">
+      <input type="hidden" name="_method" value="DELETE">
+      <button type="submit">ログアウト</button>
+    </form>
+  </div>
 </div>
 <div>
   <ul>
@@ -49,9 +87,11 @@
           <form method="GET" action="/request_log/<%= form.form_key %>">
             <button type="submit">リクエスト履歴</button>
           </form>
-          <button>リンクをコピー</button>
+          <button class="copy-link" data-link="https://e424d4bb401e40f1ae8263fec56b8cfa.vfs.cloud9.ap-northeast-1.amazonaws.com/form/<%= form.form_key %>">リンクをコピー</button>
         </li>
       <% end %>
     </div>
   </ul>
 </div>
+<script src="/js/main.js"></script>
+

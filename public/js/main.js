@@ -25,3 +25,36 @@ function fetchForm() {
            document.getElementById('formContent').innerHTML = html;
         });
 }
+
+const menuButton = document.getElementById('menuButton');
+  const menu = document.getElementById('menu');
+  
+  menuButton.addEventListener('click', () => {
+    menu.classList.toggle('open');
+    document.body.classList.toggle('menu-open'); // bodyにクラスを付け外
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const menuButton = document.getElementById('menuButton');
+  const menu = document.getElementById('menu');
+  
+  menuButton.addEventListener('click', () => {
+    menu.classList.toggle('open');
+    document.body.classList.toggle('menu-open');
+  });
+
+  const copyButtons = document.querySelectorAll('.copy-link');
+
+  copyButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const link = button.getAttribute('data-link');
+      navigator.clipboard.writeText(link)
+        .then(() => {
+          alert('リンクをコピーしました！');
+        })
+        .catch(err => {
+          console.error('コピーに失敗しました:', err);
+        });
+    });
+  });
+});

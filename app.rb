@@ -458,6 +458,11 @@ get '/logup_form' do
   erb :'admin/logup_form', layout: :'admin/layout'
 end
 
+get "/user/edit" do
+  @user = User.find(session[:user_id])
+  erb :'admin/user_edit_form', layout: :'admin/layout'
+end
+
 post '/login' do
   user = User.find_by(mail: params[:mail])
 
@@ -476,6 +481,33 @@ post '/login' do
   end
 end
 
+delete '/logout' do
+  session.delete(:user_id)
+  session.delete(:access_token)
+  session.delete(:refresh_token)
+  session.delete(:expires_in)
+  redirect '/'  
+end
+
+patch '/user/edit/:id' do
+  @user = User.find(session[:user_id])
+  
+  @user.first_name = params[:first_name]
+  @user.last_name = params[:last_name]
+  @user.nick_name = params[:nick_name]
+  @user.mail = params[:mail]
+
+  unless params[:password].empty?
+    @user.password = params[:password]
+  end
+
+  if @user.save
+    redirect '/admin' 
+  else
+    session[:notice] = "更新に失敗しました"
+    redirect '/user/edit'
+  end
+end
 
 post '/auth_signup' do
   session[:signup_params] = {

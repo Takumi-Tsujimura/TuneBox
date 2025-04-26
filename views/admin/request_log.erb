@@ -1,5 +1,7 @@
 <h2>リクエストログ　(フォームID: <%= @form.form_key %>)</h2>
-
+<form method="GET" action="/admin">
+  <button>戻る</button>
+</form>
 <% if @requests.empty? %>
   <p>まだリクエストはありません。</p>
 <% else %>
