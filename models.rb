@@ -4,6 +4,9 @@ Bundler.require
 ActiveRecord::Base.establish_connection
 
 class Form < ActiveRecord::Base
+  before_create do
+    self.form_key = SecureRandom.uuid
+  end
   belongs_to :user
 
   validates :form_name, presence: true

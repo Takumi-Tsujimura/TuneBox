@@ -12,6 +12,8 @@ require 'cgi'
 require './models'
 
 enable :sessions
+use Rack::MethodOverride
+
 
 configure do
   # 環境変数の読み込みを行う
@@ -40,16 +42,20 @@ def refresh_user_access_token(user)
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
   if res.is_a?(Net::HTTPSuccess)
     token_data = JSON.parse(res.body)
-    success = user.update(
+    
+    user.assign_attributes(
       spotify_access_token: token_data['access_token'],
       spotify_expires_at: Time.now + token_data['expires_in'].to_i
     )
+    success = user.save(validate: false)
+
     puts "[INFO] トークン更新: #{user.id} 成功=#{success}"
     puts "[ERROR] 更新失敗: #{user.errors.full_messages.join(', ')}" unless success
   else
     puts "[ERROR] Spotifyトークンの更新に失敗: #{res.code} #{res.body}"
   end
 end
+
 
 def refresh_access_token
   return if session[:refresh_token].nil?
@@ -205,8 +211,8 @@ get '/' do
   erb :home
 end
 
-get '/form/:id' do
-  @form = Form.find(params[:id])
+get '/form/:form_key' do
+  @form = Form.find_by(form_key: params[:form_key])
   @success_message = session.delete(:success_message)
   
   today_deadline = Date.today - 1
@@ -219,10 +225,10 @@ get '/form/:id' do
   erb :'users/show', layout: :'users/layout'
 end
 
-get '/search/:id' do
-  @form = Form.find(params[:id])
+get '/search/:form_key' do
+  @form = Form.find_by(form_key: params[:form_key])
   keyword = params[:keyword]
-  return redirect "/form/\#{params[:id]}" if keyword.nil? || keyword.strip.empty?
+  return redirect "/form/\#{params[:form_key]}" if keyword.nil? || keyword.strip.empty?
 
   form_owner = @form.user
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
@@ -247,8 +253,8 @@ get '/req_form' do
   erb :'users/req_form', layout: false
 end
 
-post '/submit_request/:id' do
-  @form = Form.find(params[:id])
+post '/submit_request/:form_key' do
+  @form = Form.find_by(form_key: params[:form_key])
   user_name = params[:user_name]
   track_name = params[:track_name]
   track_artists = params[:track_artists]
@@ -288,7 +294,7 @@ post '/submit_request/:id' do
 
   if duplicate_found
     request = Request.create(
-      form_id: @form.id.to_s,
+      form_id: @form.form_key.to_s,
       user_name: user_name,
       track_name: track_name,
       track_artists: track_artists,
@@ -297,7 +303,7 @@ post '/submit_request/:id' do
     puts "=== リクエスト保存 ==="
     puts request.inspect
     session[:success_message] = "リクエストが完了しました"
-    redirect "/form/#{params[:id]}"
+    redirect "/form/#{params[:form_key]}"
   end
 
   # 追加処理
@@ -316,7 +322,7 @@ post '/submit_request/:id' do
 
   if res.is_a?(Net::HTTPSuccess)
     request = Request.create(
-      form_id: @form.id.to_s,
+      form_id: @form.form_key.to_s,
       user_name: user_name,
       track_name: track_name,
       track_artists: track_artists,
@@ -326,7 +332,7 @@ post '/submit_request/:id' do
     puts request.inspect
 
     session[:success_message] = "リクエストが完了しました"
-    redirect "/form/#{params[:id]}"
+    redirect "/form/#{params[:form_key]}"
   else
     "Spotify APIエラー: #{res.code} - #{res.body}"
   end
@@ -391,14 +397,17 @@ post '/form_templates' do
   )
 
   if form.save
+    puts "=== フォーム作成成功 ==="
+    puts "form_id: #{form.id}"
+    puts "form_key(UUID): #{form.form_key}"
     redirect '/admin'
   else
     erb :error, locals: { message: "フォームの保存に失敗しました。" }
   end
 end
 
-get '/forms/:id/edit' do
-  @form = Form.find(params[:id])
+get '/forms/:form_key/edit' do
+  @form = Form.find_by(form_key: params[:form_key])
   
   ensure_valid_token  # トークンの有効性を確認・更新
   token = session[:access_token]
@@ -426,14 +435,16 @@ get '/forms/:id/edit' do
   erb :'admin/edit', layout: :'admin/layout'
 end
 
-patch '/forms/:id' do
-  form = Form.find(params[:id])
+patch '/forms/:form_key' do
+  form = Form.find_by(form_key: params[:form_key])
   form.update(form_name: params[:form_name], playlist_id: params[:playlist_id], deadline: params[:deadline])
   redirect '/admin'
 end
 
-delete '/forms/:id' do
-  form = Form.find(params[:id])
+delete '/forms/:form_key' do
+  form = Form.find_by(form_key: params[:form_key])
+  halt 404, "フォームが見つかりません" unless form
+    
   form.destroy
   redirect '/admin'
 end
@@ -484,24 +495,25 @@ post '/admin/delete_all_users' do
   "全ユーザーを削除しました"
 end
 
-get '/request_log/:id' do
-  @form_id = params[:id]
-  @requests = Request.where(form_id: @form_id).order(created_at: :desc)
+get '/request_log/:form_key' do
+  @form = Form.find_by(form_key: params[:form_key])
+  
+  @requests = Request.where(form_id: @form.form_key).order(created_at: :desc)
   erb :'admin/request_log', layout: :'admin/layout'
 end
 
 post '/track_delete' do
-  form_id = params[:form_id]
+  form_key = params[:form_id]
   track_id = params[:track_id]
 
-  form = Form.find(form_id)
+  form = Form.find_by(form_key: form_key)
   playlist_id = form.playlist_id
 
   form_owner = form.user  # ← 修正ポイント
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
 
   token = form_owner.spotify_access_token
-  return "エラー: このフォームの管理者がSpotifyにログインしていません" if token.nil? || token.empty?
+  return "エラー: このフォームの管理者がSpfotifyにログインしていません" if token.nil? || token.empty?
 
   uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks")
 
@@ -519,9 +531,9 @@ post '/track_delete' do
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
   if res.is_a?(Net::HTTPSuccess)
-    request = Request.find_by(form_id: form_id, track_id: track_id)
+    request = Request.find_by(form_id: form_key, track_id: track_id)
     request.destroy if request
-    redirect "/request_log/#{form_id}"
+    redirect "/request_log/#{form_key}"
   else
     "Spotify APIエラー: #{res.code} - #{res.body}"
   end

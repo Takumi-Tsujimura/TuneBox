@@ -4,7 +4,7 @@
       <h2>フォーム編集</h2>
     </div>
     <div>
-      <form method="POST" action="/forms/<%= @form.id %>">
+      <form method="POST" action="/forms/<%= @form.form_key %>">
         <div>
           <input type="hidden" name="_method" value="PATCH">
         </div>

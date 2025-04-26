@@ -33,20 +33,20 @@
                 <%= form.deadline %>
               <% end %>
             </p>
-            <form method="GET" action="/forms/<%= form.id %>/edit"> 
+            <form method="GET" action="/forms/<%= form.form_key %>/edit"> 
               <button type="submit">編集</button>
             </form>
-            <form method="POST" action="/forms/<%= form.id %>">
+            <form method="POST" action="/forms/<%= form.form_key %>">
               <input type="hidden" name="_method" value="DELETE">
               <input type="submit" value="削除">
             </form>
             <% if form.deadline.nil? || form.deadline >= today_deadline %>
-            <form method="GET" action="/form/<%= form.id %>">
+            <form method="GET" action="/form/<%= form.form_key %>">
               <button type="submit">フォームを開く</button>
             </form>
            
           <% end %>
-          <form method="GET" action="/request_log/<%= form.id %>">
+          <form method="GET" action="/request_log/<%= form.form_key %>">
             <button type="submit">リクエスト履歴</button>
           </form>
           <button>リンクをコピー</button>

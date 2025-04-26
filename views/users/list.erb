@@ -18,8 +18,8 @@
               </p>
               <div>
                 <input type="hidden" id="track_id" name="track_id" value="<%= item["id"] %>">
-                <input type="hidden" name="track_name" value="<%= item["name"] %>">
-                <input type="hidden" name="track_artists" value="<%= item["artists"].map { |a| a["name"] }.join(', ') %>">
+                <input type="hidden" id="track_name" name="track_name" value="<%= item["name"] %>">
+                <input type="hidden" id="track_artists" name="track_artists" value="<%= item["artists"].map { |a| a["name"] }.join(', ') %>">
               </div>
               <div class="text-end">
                 <button
@@ -42,7 +42,7 @@
 
      <!--モーダル (ポップアップ) の部分 -->
     <div id="modal" class="modal">
-        <form method="POST" action="/submit_request/<%= @form.id %>">
+        <form method="POST" action="/submit_request/<%= @form.form_key %>">
             <div class="modal-content">
                 <span class="close" onclick="closePopup()">&times;</span>
                 <div id="track-info"></div>

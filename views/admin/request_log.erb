@@ -1,4 +1,4 @@
-<h2>リクエストログ（フォームID: <%= @form_id %>）</h2>
+<h2>リクエストログ　(フォームID: <%= @form.form_key %>)</h2>
 
 <% if @requests.empty? %>
   <p>まだリクエストはありません。</p>
@@ -12,7 +12,7 @@
         <strong>アーティスト:</strong> <%= r.track_artists %><br>
         <strong>トラックID:</strong> <%= r.track_id %>
         <form method="POST" action="/track_delete">
-          <input type="hidden" name="form_id" id="form_id" value="<%= @form_id %>">
+          <input type="hidden" name="form_id" id="form_id" value="<%= @form.form_key %>">
           <input type="hidden" name="track_id" id="track_id" value="<%= r.track_id %>">
           <button type="submit">削除</button>
         </form>
