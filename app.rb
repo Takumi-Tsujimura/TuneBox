@@ -249,7 +249,9 @@ get '/search/:form_key' do
   erb :'users/list', layout: :'users/layout'
 end
 
-get '/req_form' do
+get '/form/:form_key/req_form' do
+  puts "[DEBUG] form_key: #{params[:form_key]}"
+  @form = Form.find_by(form_key: params[:form_key])
   erb :'users/req_form', layout: false
 end
 
@@ -454,8 +456,8 @@ get '/login_form' do
   erb :'admin/login_form', layout: :'admin/layout'
 end
 
-get '/logup_form' do
-  erb :'admin/logup_form', layout: :'admin/layout'
+get '/signup_form' do
+  erb :'admin/signup_form', layout: :'admin/layout'
 end
 
 get "/user/edit" do
@@ -534,21 +536,22 @@ get '/request_log/:form_key' do
   erb :'admin/request_log', layout: :'admin/layout'
 end
 
-post '/track_delete' do
-  form_key = params[:form_id]
+delete '/forms/:form_key/tracks/:track_id' do
+  form_key = params[:form_key]
   track_id = params[:track_id]
 
   form = Form.find_by(form_key: form_key)
+  halt 404, "フォームが見つかりません" unless form
+
   playlist_id = form.playlist_id
 
-  form_owner = form.user  # ← 修正ポイント
+  form_owner = form.user
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
 
   token = form_owner.spotify_access_token
-  return "エラー: このフォームの管理者がSpfotifyにログインしていません" if token.nil? || token.empty?
+  halt 403, "エラー: このフォームの管理者がSpotifyにログインしていません" if token.nil? || token.empty?
 
   uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks")
-
   request_body = {
     "tracks" => [
       { "uri" => "spotify:track:#{track_id}" }
@@ -564,9 +567,9 @@ post '/track_delete' do
 
   if res.is_a?(Net::HTTPSuccess)
     request = Request.find_by(form_id: form_key, track_id: track_id)
-    request.destroy if request
+    request&.destroy  # &.でnil安全に破壊できる
     redirect "/request_log/#{form_key}"
   else
-    "Spotify APIエラー: #{res.code} - #{res.body}"
+    halt 500, "Spotify APIエラー: #{res.code} - #{res.body}"
   end
 end

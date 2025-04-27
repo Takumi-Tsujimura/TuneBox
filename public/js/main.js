@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // モーダルを開く関数
-function openPopup(trackName, trackImage, trackArtists, trackId) {
+function openPopup(trackName, trackImage, trackArtists, trackId, formKey) {
   const modal = document.getElementById('modal');
   if (modal) {
     modal.style.display = 'block';
@@ -40,9 +40,10 @@ function openPopup(trackName, trackImage, trackArtists, trackId) {
       <p>アーティスト: ${trackArtists}</p>
       <img src="${trackImage}" alt="${trackName}" style="width: 100px; height: 100px;">
     `;
-    fetchForm(); // フォームの内容を取得して表示
+    fetchForm(formKey); 
   }
 }
+
 
 // モーダルを閉じる関数
 function closePopup() {
@@ -53,8 +54,8 @@ function closePopup() {
 }
 
 // フォーム内容を非同期で取得してモーダルに表示
-function fetchForm() {
-  fetch('/req_form')
+function fetchForm(formKey) {
+  fetch(`/form/${formKey}/req_form`)  // ← formKeyを使って正しいURLに！
     .then(response => response.text())
     .then(html => {
       const formContent = document.getElementById('formContent');
@@ -63,3 +64,4 @@ function fetchForm() {
       }
     });
 }
+
