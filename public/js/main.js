@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // リンクをコピー
   const copyButtons = document.querySelectorAll('.copy-link');
-
   copyButtons.forEach(button => {
     button.addEventListener('click', () => {
       const link = button.getAttribute('data-link');
@@ -30,20 +29,31 @@ document.addEventListener('DOMContentLoaded', () => {
 // モーダルを開く関数
 function openPopup(trackName, trackImage, trackArtists, trackId, formKey) {
   const modal = document.getElementById('modal');
-  if (modal) {
+  const trackInfo = document.getElementById('track-info');
+  const formContent = document.getElementById('formContent');
+
+  if (modal && trackInfo && formContent) {
+    // モーダルを表示
     modal.style.display = 'block';
-    document.getElementById('track-info').innerHTML = `
+
+    // 曲情報をtrack-infoに表示（hiddenもここに埋め込む）
+    trackInfo.innerHTML = `
       <h3>曲名: ${trackName}</h3>
-      <input id="track_id" name="track_id" value="${trackId}" type="hidden">
-      <input id="track_name" name="track_name" value="${trackName}" type="hidden">
-      <input id="track_artists" name="track_artists" value="${trackArtists}" type="hidden">
+      <input type="hidden" id="track_id" name="track_id" value="${trackId}">
+      <input type="hidden" id="track_name" name="track_name" value="${trackName}">
+      <input type="hidden" id="track_artists" name="track_artists" value="${trackArtists}">
       <p>アーティスト: ${trackArtists}</p>
       <img src="${trackImage}" alt="${trackName}" style="width: 100px; height: 100px;">
     `;
-    fetchForm(formKey); 
+
+    // フォーム内容だけfetchしてformContentに埋め込む
+    fetch(`/form/${formKey}/req_form`)
+      .then(response => response.text())
+      .then(html => {
+        formContent.innerHTML = html;
+      });
   }
 }
-
 
 // モーダルを閉じる関数
 function closePopup() {
@@ -52,16 +62,3 @@ function closePopup() {
     modal.style.display = 'none';
   }
 }
-
-// フォーム内容を非同期で取得してモーダルに表示
-function fetchForm(formKey) {
-  fetch(`/form/${formKey}/req_form`)  // ← formKeyを使って正しいURLに！
-    .then(response => response.text())
-    .then(html => {
-      const formContent = document.getElementById('formContent');
-      if (formContent) {
-        formContent.innerHTML = html;
-      }
-    });
-}
-

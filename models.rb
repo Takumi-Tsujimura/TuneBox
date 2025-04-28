@@ -28,5 +28,5 @@ class User < ActiveRecord::Base
 end
 
 class Request < ActiveRecord::Base
-  
+  belongs_to :form, primary_key: "form_key", foreign_key: "form_key"
 end

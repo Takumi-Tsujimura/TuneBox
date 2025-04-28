@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_04_26_042656) do
+ActiveRecord::Schema.define(version: 2025_04_28_163555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 2025_04_26_042656) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id"
     t.string "form_key"
+    t.string "form_type"
     t.index ["user_id"], name: "index_forms_on_user_id"
   end
 
@@ -34,6 +35,10 @@ ActiveRecord::Schema.define(version: 2025_04_26_042656) do
     t.string "track_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "grade"
+    t.string "class_name"
+    t.string "number"
+    t.string "form_key"
   end
 
   create_table "users", force: :cascade do |t|

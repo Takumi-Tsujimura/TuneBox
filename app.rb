@@ -252,15 +252,34 @@ end
 get '/form/:form_key/req_form' do
   puts "[DEBUG] form_key: #{params[:form_key]}"
   @form = Form.find_by(form_key: params[:form_key])
-  erb :'users/req_form', layout: false
+
+  if @form.nil?
+    return erb :error, locals: { message: "フォームが見つかりませんでした。" }
+  end
+
+  case @form.form_type
+  when 'general'
+    erb :'users/req_form_for_general', layout: false
+  when 'school'
+    erb :'users/req_form_for_school', layout: false
+  else
+    erb :error, locals: { message: "不正なフォームタイプです。" }
+  end
 end
 
 post '/submit_request/:form_key' do
   @form = Form.find_by(form_key: params[:form_key])
+  halt(404, "フォームが見つかりません") unless @form
+  
   user_name = params[:user_name]
   track_name = params[:track_name]
   track_artists = params[:track_artists]
   track_id = params[:track_id]
+
+  # 追加: 学年・クラス・番号も受け取る
+  grade = params[:grade]
+  class_name = params[:class_name]   
+  number = params[:number]
   
   return "エラー: トラックIDが指定されていません" if track_id.nil? || track_id.strip.empty?
   
@@ -294,21 +313,30 @@ post '/submit_request/:form_key' do
     playlist_uri = URI(next_url)
   end
 
-  if duplicate_found
-    request = Request.create(
-      form_id: @form.form_key.to_s,
+  # リクエストを保存する共通処理
+  def save_request(form, user_name, track_name, track_artists, track_id, grade, class_name, number)
+    Request.create(
+      form_key: form.form_key,
+      form_id: form.id,
       user_name: user_name,
       track_name: track_name,
       track_artists: track_artists,
-      track_id: track_id
+      track_id: track_id,
+      grade: grade,
+      class_name: class_name,  # ★ここカラム名は class_nameにする
+      number: number
     )
-    puts "=== リクエスト保存 ==="
+  end
+
+  if duplicate_found
+    request = save_request(@form, user_name, track_name, track_artists, track_id, grade, class_name, number)
+    puts "=== リクエスト保存 (重複)" 
     puts request.inspect
     session[:success_message] = "リクエストが完了しました"
     redirect "/form/#{params[:form_key]}"
   end
 
-  # 追加処理
+  # 重複してない場合 → Spotifyに追加
   uri = URI("https://api.spotify.com/v1/playlists/#{@form.playlist_id}/tracks")
   request_body = {
     "uris" => ["spotify:track:#{track_id}"],
@@ -323,16 +351,9 @@ post '/submit_request/:form_key' do
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
   if res.is_a?(Net::HTTPSuccess)
-    request = Request.create(
-      form_id: @form.form_key.to_s,
-      user_name: user_name,
-      track_name: track_name,
-      track_artists: track_artists,
-      track_id: track_id
-    )
-    puts "=== リクエスト保存 ==="
+    request = save_request(@form, user_name, track_name, track_artists, track_id, grade, class_name, number)
+    puts "=== リクエスト保存 (追加成功)"
     puts request.inspect
-
     session[:success_message] = "リクエストが完了しました"
     redirect "/form/#{params[:form_key]}"
   else
@@ -389,12 +410,15 @@ post '/form_templates' do
   form_name = params[:form_name]
   playlist_id = params[:playlist_id]
   deadline = params[:deadline]
+  form_type = params[:form_type]
+  
   deadline = nil if deadline.nil? || deadline.strip.empty?
 
   form = Form.new(
     form_name: form_name,
     playlist_id: playlist_id,
     deadline: deadline,
+    form_type: form_type,
     user_id: user_id
   )
 
@@ -439,9 +463,21 @@ end
 
 patch '/forms/:form_key' do
   form = Form.find_by(form_key: params[:form_key])
-  form.update(form_name: params[:form_name], playlist_id: params[:playlist_id], deadline: params[:deadline])
+  halt 404, "フォームが見つかりません" unless form
+
+  deadline = params[:deadline]
+  deadline = nil if deadline.nil? || deadline.strip.empty?  
+
+  form.update(
+    form_name: params[:form_name],
+    playlist_id: params[:playlist_id],
+    deadline: deadline,
+    form_type: params[:form_type]  
+  )
+
   redirect '/admin'
 end
+
 
 delete '/forms/:form_key' do
   form = Form.find_by(form_key: params[:form_key])
@@ -523,18 +559,21 @@ post '/auth_signup' do
   redirect '/auth'
 end
 
-post '/admin/delete_all_users' do
-  User.delete_all
-  Form.delete_all
-  "全ユーザーを削除しました"
-end
+# post '/admin/delete_all_users' do
+#   User.delete_all
+#   Form.delete_all
+#   "全ユーザーを削除しました"
+# end
 
 get '/request_log/:form_key' do
   @form = Form.find_by(form_key: params[:form_key])
+  halt(404, "フォームが見つかりません") unless @form
   
-  @requests = Request.where(form_id: @form.form_key).order(created_at: :desc)
+  @requests = Request.where(form_key: @form.form_key).order(created_at: :desc)
+  
   erb :'admin/request_log', layout: :'admin/layout'
 end
+
 
 delete '/forms/:form_key/tracks/:track_id' do
   form_key = params[:form_key]
@@ -566,8 +605,9 @@ delete '/forms/:form_key/tracks/:track_id' do
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
   if res.is_a?(Net::HTTPSuccess)
-    request = Request.find_by(form_id: form_key, track_id: track_id)
-    request&.destroy  # &.でnil安全に破壊できる
+    # ★ここ修正！
+    request = Request.find_by(form_key: form_key, track_id: track_id)
+    request&.destroy
     redirect "/request_log/#{form_key}"
   else
     halt 500, "Spotify APIエラー: #{res.code} - #{res.body}"

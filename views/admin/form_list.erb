@@ -71,6 +71,15 @@
                 <%= form.deadline %>
               <% end %>
             </p>
+            <p name="form_type">フォームタイプ：
+              <% if form.form_type == 'general' %>
+                一般
+              <% elsif form.form_type == 'school' %>
+                学校用
+              <% else %>
+                未設定
+              <% end %>
+            </p>
             <form method="GET" action="/forms/<%= form.form_key %>/edit"> 
               <button type="submit">編集</button>
             </form>
