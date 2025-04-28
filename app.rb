@@ -16,10 +16,9 @@ use Rack::MethodOverride
 
 
 configure do
-  # 環境変数の読み込みを行う
+  
   Dotenv.load
 
-  # 必要な環境変数が読み込まれているかチェックしたり、設定をここで行う
   set :client_id, ENV['CLIENT_ID']
   set :client_secret, ENV['CLIENT_SECRET']
   set :redirect_uri, ENV['REDIRECT_URI'] || 'http://localhost:8888/callback'
@@ -190,17 +189,15 @@ get '/callback' do
     if user.save
       session[:user_id] = user.id
 
-      # Spotifyトークンをセッションに保存（ここが重要！）
       session[:access_token] = access_token
       session[:refresh_token] = refresh_token
       session[:expires_in] = expires_at
 
-      redirect '/login_form'  # ← ここはあなたの希望通り維持
+      redirect '/login_form'
     else
       return "ユーザー登録に失敗しました: #{user.errors.full_messages.join(', ')}"
     end
   else
-    # 既存ユーザーのSpotify連携処理（必要なら後で拡張）
     redirect '/admin'
   end
 end
@@ -276,7 +273,6 @@ post '/submit_request/:form_key' do
   track_artists = params[:track_artists]
   track_id = params[:track_id]
 
-  # 追加: 学年・クラス・番号も受け取る
   grade = params[:grade]
   class_name = params[:class_name]   
   number = params[:number]
@@ -323,7 +319,7 @@ post '/submit_request/:form_key' do
       track_artists: track_artists,
       track_id: track_id,
       grade: grade,
-      class_name: class_name,  # ★ここカラム名は class_nameにする
+      class_name: class_name, 
       number: number
     )
   end
@@ -507,7 +503,6 @@ post '/login' do
   if user && user.authenticate(params[:password])
     session[:user_id] = user.id
 
-    # ↓↓↓ ここを追加
     session[:access_token] = user.spotify_access_token
     session[:refresh_token] = user.spotify_refresh_token
     session[:expires_in] = user.spotify_expires_at
@@ -605,7 +600,6 @@ delete '/forms/:form_key/tracks/:track_id' do
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
   if res.is_a?(Net::HTTPSuccess)
-    # ★ここ修正！
     request = Request.find_by(form_key: form_key, track_id: track_id)
     request&.destroy
     redirect "/request_log/#{form_key}"
