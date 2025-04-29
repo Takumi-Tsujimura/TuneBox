@@ -24,13 +24,12 @@
               <div class="text-end">
                 <button
                   class="btn btn-sm btn-primary"
-                  onclick="openPopup(
-                    '<%= item["name"] %>',
-                    '<%= item["album"]["images"][2]["url"] %>',
-                    '<%= item["artists"].map { |artist| artist["name"] }.join(", ") %>',
-                    '<%= item["id"] %>',
-                    '<%= @form.form_key %>'
-                  )"
+                  onclick="openPopup(this)"
+                  data-name="<%= item["name"] %>" 
+                  data-image="<%= item["album"]["images"][2]["url"] %>" 
+                  data-artists="<%= item["artists"].map { |artist| artist["name"] }.join(", ") %>"
+                  data-id="<%= item["id"] %>"
+                  data-form-key="<%= @form.form_key %>"
                 >
                   リクエスト
                 </button>

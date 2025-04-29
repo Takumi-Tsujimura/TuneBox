@@ -11,13 +11,11 @@
 <body>
     <% if session[:user_id] %>
       <!-- ログイン済みなら /admin へ -->
-      <a href="/admin" class="btn btn-success btn-sm">フォームリストへ</a>
+      <a href="/admin" class="btn btn-success btn-sm">マイページ</a>
     <% else %>
       <!-- 未ログインなら /login_form へ -->
       <a href="/login_form" class="btn btn-primary btn-sm">ログイン</a>
+      <a href="/signup_form" class="btn btn-primary btn-sm">新規登録</a>
     <% end %>
-    <form method="GET" action="/admin">
-        <button type="submit">管理者ページ</button>
-    </form>
 </body>
 </html>

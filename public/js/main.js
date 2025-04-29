@@ -26,8 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// モーダルを開く関数
-function openPopup(trackName, trackImage, trackArtists, trackId, formKey) {
+// モーダルを開く関数（thisを受け取る）
+function openPopup(button) {
+  const trackName = button.dataset.name;
+  const trackImage = button.dataset.image;
+  const trackArtists = button.dataset.artists;
+  const trackId = button.dataset.id;
+  const formKey = button.dataset.formKey;
+
   const modal = document.getElementById('modal');
   const trackInfo = document.getElementById('track-info');
   const formContent = document.getElementById('formContent');
@@ -36,7 +42,7 @@ function openPopup(trackName, trackImage, trackArtists, trackId, formKey) {
     // モーダルを表示
     modal.style.display = 'block';
 
-    // 曲情報をtrack-infoに表示（hiddenもここに埋め込む）
+    // 曲情報をtrack-infoに表示
     trackInfo.innerHTML = `
       <h3>曲名: ${trackName}</h3>
       <input type="hidden" id="track_id" name="track_id" value="${trackId}">
@@ -51,6 +57,9 @@ function openPopup(trackName, trackImage, trackArtists, trackId, formKey) {
       .then(response => response.text())
       .then(html => {
         formContent.innerHTML = html;
+      })
+      .catch(error => {
+        console.error('フォームの読み込みに失敗しました:', error);
       });
   }
 }
