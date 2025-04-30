@@ -8,7 +8,7 @@ development:
   
 production:
   <<: *default
-  host: <%= ENV['DB_HOST'] %>
-  database: <%= ENV['DB_NAME'] %>
-  username: <%= ENV['DB_USER'] %>
-  password: <%= ENV['DB_PASSWORD'] %>
+  host: dpg-d093u949c44c73adh9dg-a
+  database: s_original_435w
+  username: s_original_435w_user
+  password: jQVef20TDQNWqzEr1qHm6zoyMltlmcnt
