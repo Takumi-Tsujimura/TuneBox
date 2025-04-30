@@ -8,7 +8,7 @@ development:
   
 production:
   <<: *default
-  host: Connection の Hostname
-  database: Connection の Database
-  username: Connection の Username
-  password: Connection の Password
+  host: <%= ENV['DB_HOST'] %>
+  database: <%= ENV['DB_NAME'] %>
+  username: <%= ENV['DB_USER'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
