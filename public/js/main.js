@@ -44,13 +44,16 @@ function openPopup(button) {
 
     // 曲情報をtrack-infoに表示
     trackInfo.innerHTML = `
-      <h3>曲名: ${trackName}</h3>
-      <input type="hidden" id="track_id" name="track_id" value="${trackId}">
-      <input type="hidden" id="track_name" name="track_name" value="${trackName}">
-      <input type="hidden" id="track_artists" name="track_artists" value="${trackArtists}">
-      <p>アーティスト: ${trackArtists}</p>
-      <img src="${trackImage}" alt="${trackName}" style="width: 100px; height: 100px;">
+      <div class="d-flex flex-column align-items-start">
+        <img src="${trackImage}" alt="${trackName}" class="img-thumbnail mb-3" style="width: 200px; height: 200px;">
+        <h5 class="mb-1">曲名: ${trackName}</h5>
+        <p class="mb-1">アーティスト: ${trackArtists}</p>
+        <input type="hidden" id="track_id" name="track_id" value="${trackId}">
+        <input type="hidden" id="track_name" name="track_name" value="${trackName}">
+        <input type="hidden" id="track_artists" name="track_artists" value="${trackArtists}">
+      </div>
     `;
+
 
     // フォーム内容だけfetchしてformContentに埋め込む
     fetch(`/form/${formKey}/req_form`)

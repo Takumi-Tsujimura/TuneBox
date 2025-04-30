@@ -1,3 +1,29 @@
+<style>
+  .modal {
+    display: none; /* ←これを復活させる！ */
+    position: fixed;
+    z-index: 1001;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+    
+  .modal-content {
+    position: relative;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 800px;
+    width: 100%;
+    text-align: left;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-20%);
+  }
+</style>
+
 <div class="px-3" style="margin-top: 30px;">
   <div> 
     <% @items.each do |item| %>
@@ -26,7 +52,7 @@
                   class="btn btn-sm btn-primary"
                   onclick="openPopup(this)"
                   data-name="<%= item["name"] %>" 
-                  data-image="<%= item["album"]["images"][2]["url"] %>" 
+                  data-image="<%= item["album"]["images"][0]["url"] %>" 
                   data-artists="<%= item["artists"].map { |artist| artist["name"] }.join(", ") %>"
                   data-id="<%= item["id"] %>"
                   data-form-key="<%= @form.form_key %>"
@@ -42,15 +68,26 @@
   </div>
 
      <!--モーダル (ポップアップ) の部分 -->
-    <div id="modal" class="modal">
-        <form method="POST" action="/submit_request/<%= @form.form_key %>">
-            <div class="modal-content">
-                <span class="close" onclick="closePopup()">&times;</span>
-                <div id="track-info"></div>
-                <div id="formContent"></div> <!-- ここにreq_form.erbが埋め込まれる -->
-                <button type="submit">送信</button>
-            </div>
-        </form>
-    </div>
+  <div id="modal" class="modal">
+    <form method="POST" action="/submit_request/<%= @form.form_key %>">
+      <div class="modal-content p-4 rounded bg-white position-relative">
+        
+        <!-- × マーク -->
+        <button type="button" class="btn-close position-absolute" aria-label="閉じる" style="top: 10px; right: 10px;" onclick="closePopup()"></button>
+  
+        <div class="row">
+          <div class="col-md-5" id="track-info"></div>
+          <div class="col-md-7 d-flex flex-column justify-content-end" style="min-height: 200px;">
+            <div id="formContent" class="w-100"></div>
+          </div>
+        </div>
+  
+        <div class="text-end mt-3">
+          <button type="submit" class="btn btn-primary">送信</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
 </div>
 <script src="/js/main.js?<%= Time.now.to_i %>"></script>

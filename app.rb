@@ -554,6 +554,24 @@ post '/auth_signup' do
   redirect '/auth'
 end
 
+delete '/user_delete' do
+  if session[:user_id]
+    user = User.find_by(id: session[:user_id])
+    if user
+      user.forms.destroy_all
+      user.destroy
+      session.clear  
+      redirect '/'  
+    else
+      status 404
+      "ユーザーが見つかりません"
+    end
+  else
+    status 403
+    "ログインしていません"
+  end
+end
+
 # post '/admin/delete_all_users' do
 #   User.delete_all
 #   Form.delete_all

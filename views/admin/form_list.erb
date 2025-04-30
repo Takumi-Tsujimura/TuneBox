@@ -2,76 +2,90 @@
   #menu {
     position: fixed;
     top: 0;
-    right: -250px; /* 最初は画面の外に隠す */
+    right: -250px;
     width: 250px;
     height: 100%;
     background-color: white;
     border-left: 1px solid #ccc;
     box-shadow: -2px 0 8px rgba(0,0,0,0.2);
     padding: 20px;
-    transition: right 0.3s; /* なめらかに動かす */
-    z-index: 999; /* ボタンより下にする */
+    transition: right 0.3s;
+    z-index: 999;
   }
-  
+
   #menu.open {
     right: 0;
   }
-  
-  /* ここからボタンのスタイル！ */
+
   #menuButton {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 1000; /* メニューより上に出す */
-    transition: right 0.3s; /* これをつける！ */
+    z-index: 1000;
+    transition: right 0.3s;
   }
-  
-  /* メニューが開いたら、ボタンも動かす */
+
   .menu-open #menuButton {
-    right: 270px; /* メニューの幅(250px)＋ちょっと余裕20px */
+    right: 270px;
+  }
+
+  #menu h5 {
+    font-weight: bold;
+    color: #333;
+  }
+
+  #menu form button {
+    margin-bottom: 10px;
   }
 </style>
 
-<div>
-  <form method="GET" action="/form_templates/new">
-    <button type="submit">新規作成</button>
-  </form>
-</div>
-<div>
-  <div>
-  <!-- ハンバーガーボタン -->
-  <button id="menuButton">☰</button>
-
-  <!-- スライドメニュー -->
-  <div id="menu">
-    <form method="GET" action="/user/edit">
-      <button type="submit">ユーザー設定編集</button>
-    </form>
-    <form method="POST" action="/logout">
-      <input type="hidden" name="_method" value="DELETE">
-      <button type="submit">ログアウト</button>
+<!-- 上部操作 -->
+<div class="container-fluid mt-4">
+  <div style="max-width: 800px; margin-left: 3rem;">
+    <form method="GET" action="/form_templates/new">
+      <button type="submit" class="btn btn-success">新規作成</button>
     </form>
   </div>
 </div>
-<div>
-  <ul>
-    <div>
-      <% @forms.each do |form| %>
-        <li>
-          <% today_deadline = Time.new(Time.now.year, Time.now.month, Time.now.day) %>
-            <h4 name="form_name"><%= form.form_name %></h4>
-            <input type="hidden" value="<%= form.playlist_id %>" name="playlist_id">
-            <p name="created_at">作成日：<%= form.created_at.strftime("%Y-%m-%d %H:%M") %></p>
-            <p name="deadline">期限：
+
+<!-- ハンバーガーメニュー -->
+<button id="menuButton" class="btn btn-outline-secondary">☰</button>
+
+<div id="menu">
+  <h5 class="mb-3 border-bottom pb-2">メニュー</h5>
+  <form method="GET" action="/user/edit" class="mb-2">
+    <button type="submit" class="btn btn-primary w-100">ユーザー設定編集</button>
+  </form>
+  <form method="POST" action="/logout" class="mb-2">
+    <input type="hidden" name="_method" value="DELETE">
+    <button type="submit" class="btn btn-outline-secondary w-100">ログアウト</button>
+  </form>
+  <form method="POST" action="/user_delete">
+    <input type="hidden" name="_method" value="DELETE">
+    <button type="submit" class="btn btn-outline-danger w-100">アカウント削除</button>
+  </form>
+</div>
+
+<!-- フォームリスト（カード） -->
+<div class="container-fluid my-4">
+  <div class="row row-cols-1 row-cols-md-1 g-4 justify-content-start" style="max-width: 800px; margin-left: 1rem;">
+    <% @forms.each do |form| %>
+      <% today_deadline = Time.new(Time.now.year, Time.now.month, Time.now.day) %>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><%= form.form_name %></h5>
+            <p class="card-text">作成日：<%= form.created_at.strftime("%Y-%m-%d %H:%M") %></p>
+            <p class="card-text">期限：
               <% if form.deadline.nil? || form.deadline.to_s.strip.empty? %>
                 なし
               <% elsif form.deadline < today_deadline %>
-                期限切れ
+                <span class="text-danger">期限切れ</span>
               <% else %>
                 <%= form.deadline %>
               <% end %>
             </p>
-            <p name="form_type">フォームタイプ：
+            <p class="card-text">フォームタイプ：
               <% if form.form_type == 'general' %>
                 一般
               <% elsif form.form_type == 'school' %>
@@ -80,27 +94,34 @@
                 未設定
               <% end %>
             </p>
-            <form method="GET" action="/forms/<%= form.form_key %>/edit"> 
-              <button type="submit">編集</button>
-            </form>
-            <form method="POST" action="/forms/<%= form.form_key %>">
-              <input type="hidden" name="_method" value="DELETE">
-              <input type="submit" value="削除">
-            </form>
-            <% if form.deadline.nil? || form.deadline >= today_deadline %>
-            <form method="GET" action="/form/<%= form.form_key %>">
-              <button type="submit">フォームを開く</button>
-            </form>
-           
-          <% end %>
-          <form method="GET" action="/request_log/<%= form.form_key %>">
-            <button type="submit">リクエスト履歴</button>
-          </form>
-          <button class="copy-link" data-link="https://e424d4bb401e40f1ae8263fec56b8cfa.vfs.cloud9.ap-northeast-1.amazonaws.com/form/<%= form.form_key %>">リンクをコピー</button>
-        </li>
-      <% end %>
-    </div>
-  </ul>
+          </div>
+          <div class="card-footer bg-white border-top-0">
+            <div class="d-flex justify-content-end flex-wrap gap-2">
+              <form method="GET" action="/forms/<%= form.form_key %>/edit" class="m-0">
+                <button class="btn btn-outline-primary btn-sm">編集</button>
+              </form>
+              <form method="POST" action="/forms/<%= form.form_key %>" class="m-0">
+                <input type="hidden" name="_method" value="DELETE">
+                <button class="btn btn-outline-danger btn-sm">削除</button>
+              </form>
+              <% if form.deadline.nil? || form.deadline >= today_deadline %>
+                <form method="GET" action="/form/<%= form.form_key %>" class="m-0">
+                  <button class="btn btn-outline-success btn-sm">フォームを開く</button>
+                </form>
+              <% end %>
+              <form method="GET" action="/request_log/<%= form.form_key %>" class="m-0">
+                <button class="btn btn-outline-secondary btn-sm">リクエスト履歴</button>
+              </form>
+              <button class="btn btn-outline-dark btn-sm copy-link m-0"
+                data-link="https://e424d4bb401e40f1ae8263fec56b8cfa.vfs.cloud9.ap-northeast-1.amazonaws.com/form/<%= form.form_key %>">
+                リンクをコピー
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>
-<script src="/js/main.js"></script>
 
+<script src="/js/main.js"></script>
