@@ -5,6 +5,10 @@ default_env: &default
 
 development:
   <<: *default
-
+  
 production:
   <<: *default
+  host: Connection の Hostname
+  database: Connection の Database
+  username: Connection の Username
+  password: Connection の Password
