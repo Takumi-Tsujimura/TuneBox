@@ -10,7 +10,7 @@ production:
   <<: *default
   adapter: postgresql
   encoding: unicode
-  host: dpg-d094h2ripnbc73fuaqv0-a.pg.render.com
+  host: dpg-d094h2ripnbc73fuaqv0-a
   database: s_original_q864
   username: s_original_q864_user
   password: jYY80IRxbLWEv9VZ0KH23OYPhO2YCzsm
