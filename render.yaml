@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: bgm-request-form
-    env: ruby
-    buildCommand: "bundle install"
-    startCommand: "bundle exec ruby app.rb -o 0.0.0.0 -p $PORT"
-    migrateCommand: "bundle exec rake db:migrate"
-    plan: free
-    region: oregon
