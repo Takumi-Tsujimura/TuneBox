@@ -54,3 +54,15 @@
       padding: 4px 12px; /* コンパクトに */
       margin: 0 5px;
     }
+    
+    .app-icon {
+      width: 32px;
+      height: 32px;
+      margin-right: 8px;
+    }
+    
+    .app-title {
+      font-size: 1.5rem;
+      color: #333;
+      margin: 0;
+    }
