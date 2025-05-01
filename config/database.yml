@@ -8,3 +8,7 @@ development:
 
 production:
   <<: *default
+  host: dpg-d09i10p5pdvs73dnttg0-a
+  database: s_original_xjxo
+  username: s_original_xjxo_user
+  password: 2bOBqYMGQYSQB74NABlN3QqVnwNaodjF
