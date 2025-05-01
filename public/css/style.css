@@ -58,9 +58,9 @@ section {
 
 /* ヘッダーのアプリタイトル */
 .app-title {
-  font-size: 2.5rem; /* 少し調整して見た目のバランスを取った */
-  font-weight: bold;
+  font-size: 2.5rem; 
+  font-weight: 500;
   color: #333;
   margin: 0;
-  line-height: 1; /* 高さをそろえる */
+  line-height: 1; 
 }
