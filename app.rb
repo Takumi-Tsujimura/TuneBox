@@ -216,10 +216,14 @@ get '/form/:form_key' do
   deadline = @form.deadline.to_date rescue nil
 
   if deadline && deadline <= today_deadline
-    redirect '/admin'
+    redirect '/error'
   end
 
   erb :'users/show', layout: :'users/layout'
+end
+
+get 'error' do
+  erb :'users/error.erb', layout: false
 end
 
 get '/search/:form_key' do
