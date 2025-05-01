@@ -358,6 +358,7 @@ post '/submit_request/:form_key' do
 end
 
 get '/admin' do
+  @title = "管理者ページ"
   # @forms = Form.all
   access_token = session[:access_token]
   
@@ -370,6 +371,7 @@ get '/admin' do
 end
 
 get '/form_templates/new' do
+  @title = "新規フォーム作成"
   ensure_valid_token  # トークンの有効性を確認・更新
   token = session[:access_token]
 
@@ -429,6 +431,7 @@ post '/form_templates' do
 end
 
 get '/forms/:form_key/edit' do
+  @title = "フォーム編集"
   @form = Form.find_by(form_key: params[:form_key])
   
   ensure_valid_token  # トークンの有効性を確認・更新
@@ -484,15 +487,18 @@ delete '/forms/:form_key' do
 end
 
 get '/login_form' do
+  @title = "管理者ログイン"
   @notice = session.delete(:notice)
   erb :'admin/login_form', layout: :'admin/layout'
 end
 
 get '/signup_form' do
+  @title = "新規アカウント作成"
   erb :'admin/signup_form', layout: :'admin/layout'
 end
 
 get "/user/edit" do
+  @title = "アカウント情報 編集"
   @user = User.find(session[:user_id])
   erb :'admin/user_edit_form', layout: :'admin/layout'
 end
@@ -579,6 +585,7 @@ end
 # end
 
 get '/request_log/:form_key' do
+  @title = "リクエストログ"
   @form = Form.find_by(form_key: params[:form_key])
   halt(404, "フォームが見つかりません") unless @form
   

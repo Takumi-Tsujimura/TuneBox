@@ -10,3 +10,8 @@ production:
   host: dpg-d09i10p5pdvs73dnttg0-a
   username: s_original_xjxo_user
   password: 2bOBqYMGQYSQB74NABlN3QqVnwNaodjF
+
+default_env: &default
+  adapter: postgresql
+  encoding: unicode
+  database: s_form
