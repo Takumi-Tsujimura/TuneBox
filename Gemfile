@@ -1,10 +1,10 @@
-ruby '3.0.0'
+ruby '3.2.4'
 source 'https://rubygems.org'
 
 gem 'activerecord', '~> 6.1'
 gem 'bcrypt', '~> 3.1'
 gem 'dotenv', '~> 2.7'
-gem 'pg', '~> 1.2'
+gem 'pg', '~> 1.4'
 gem 'rake', '~> 13.0'
 gem 'sinatra', '~> 2.1'
 gem 'sinatra-activerecord', '~> 2.0'
