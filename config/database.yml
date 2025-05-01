@@ -1,14 +1,12 @@
-default_env: &default
+development:
   adapter: postgresql
   encoding: unicode
   database: s_original
 
-development:
-  <<: *default
-
 production:
-  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  database: s_original_xjxo
   host: dpg-d09i10p5pdvs73dnttg0-a
-  fatabase: s_original_xjxo
   username: s_original_xjxo_user
   password: 2bOBqYMGQYSQB74NABlN3QqVnwNaodjF
