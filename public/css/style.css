@@ -111,3 +111,15 @@ ul {
   padding: 0; /* 左側の余白をなくす（必要に応じて） */
   margin: 0;
 }
+
+.detail{
+  padding-top: 50px;
+  padding-bottom: 50px;
+  color: white;
+  background-color: black;
+}
+
+.usage-guide{
+  margin-top: 50px;
+  margin-bottom: 100px;
+}
