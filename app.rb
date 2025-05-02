@@ -490,7 +490,7 @@ delete '/forms/:form_key' do
   redirect '/admin'
 end
 
-get 'share' do
+get '/share' do
   @form_key = params[:form_key]
   erb :'admin/share', layout: false
 end
