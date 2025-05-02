@@ -134,3 +134,35 @@ ul {
     font-size: 13px;
   }
 }
+
+.header-background {
+  background-image: url('/img/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 90px 20px;
+  text-align: center;
+  color: white;
+  width: 100%; /* 横幅いっぱいに */
+}
+
+/* 画像には色をかけない */
+.header-background img {
+  filter: none;
+}
+
+/* ボタンを白く調整 */
+.header-background .btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid white;
+  color: white;
+}
+
+/* ボタンのhover時 */
+.header-background .btn:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+section {
+  margin-top: 0px;
+}
