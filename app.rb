@@ -490,6 +490,11 @@ delete '/forms/:form_key' do
   redirect '/admin'
 end
 
+get 'share' do
+  @form_key = params[:form_key]
+  erb :'admin/share', layout: false
+end
+
 get '/login_form' do
   @title = "管理者ログイン"
   @notice = session.delete(:notice)
