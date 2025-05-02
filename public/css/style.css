@@ -131,6 +131,6 @@ ul {
 /* 画面幅が768px以下（タブレット・スマホ）のとき */
 @media (max-width: 768px) {
   .detail-content {
-    font-size: 14px;
+    font-size: 13px;
   }
 }
