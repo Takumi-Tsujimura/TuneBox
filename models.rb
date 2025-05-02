@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   has_many :forms
 
   validates :mail, presence: true, uniqueness: true
-  validates :password, presence: true, length: { minimum: 6 }
+  validates :password, presence: true, length: { minimum: 8 }
   
   # Spotify連携用のカラム（必要に応じてバリデーション追加もOK）
   # spotify_uid :string
