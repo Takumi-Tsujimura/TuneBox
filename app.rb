@@ -9,6 +9,7 @@ require 'open-uri'
 require 'base64'
 require 'dotenv/load'
 require 'cgi'
+require 'rqrcode'
 require './models'
 
 enable :sessions
@@ -492,6 +493,24 @@ end
 
 get '/share' do
   @form_key = params[:form_key]
+  
+  form_url = "https://tunebox.onrender.com/form/#{@form_key}"
+
+  qrcode = RQRCode::QRCode.new(form_url)
+
+  png = qrcode.as_png(
+    bit_depth: 1,
+    border_modules: 4,
+    color_mode: ChunkyPNG::COLOR_GRAYSCALE,
+    color: 'black',
+    file: nil,
+    fill: 'white',
+    module_px_size: 6,
+    size: 200
+  )
+
+  @qr_base64 = Base64.strict_encode64(png.to_s)
+  
   erb :'admin/share', layout: false
 end
 
