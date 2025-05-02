@@ -1,37 +1,43 @@
-<h2>リクエストログ　(フォームID: <%= @form.form_key %>)</h2>
+<div class="container my-5" style="max-width: 800px;">
+  <h2 class="mb-4">リクエストログ (フォームID: <%= @form.form_key %>)</h2>
 
-<form method="GET" action="/admin">
-  <button>戻る</button>
-</form>
+  <form method="GET" action="/admin" class="mb-4">
+    <button type="submit" class="btn btn-outline-secondary">管理画面に戻る</button>
+  </form>
 
-<% if @requests.empty? %>
-  <p>まだリクエストはありません。</p>
-<% else %>
-  <ul style="list-style-type: none; padding: 0;">
-    <% @requests.each do |r| %>
-      <li style="border: 1px solid #ccc; border-radius: 6px; padding: 10px; margin-bottom: 10px;">
-        <strong>日時:</strong> <%= r.created_at.strftime("%Y-%m-%d %H:%M") %><br>
-        
-        <strong>曲名:</strong> <%= r.track_name %><br>
-        <strong>アーティスト:</strong> <%= r.track_artists %><br>
-        <strong>トラックID:</strong> <%= r.track_id %>
-        
-        <% if r.form.form_type == 'general' %>
-          <strong>ニックネーム:</strong> <%= r.user_name %><br>
-        <% elsif r.form.form_type == 'school' %>
-          <strong>学年:</strong> <%= r.grade %><br>
-          <strong>クラス:</strong> <%= r.class_name %><br>
-          <strong>番号:</strong> <%= r.number %><br>
-          <strong>名前:</strong> <%= r.user_name %><br>
-        <% end %>
+  <% if @requests.empty? %>
+    <div class="alert alert-info">まだリクエストはありません。</div>
+  <% else %>
+    <div class="list-group">
+      <% @requests.each do |r| %>
+        <div class="list-group-item mb-3 shadow-sm rounded">
+          <div class="mb-2">
+            <strong>日時:</strong> <%= r.created_at.strftime("%Y-%m-%d %H:%M") %>
+          </div>
 
-        <form method="POST" action="/forms/<%= @form.form_key %>/tracks/<%= r.track_id %>">
-          <input type="hidden" name="_method" value="delete">
-          <input type="hidden" name="form_key" value="<%= @form.form_key %>">
-          <input type="hidden" name="track_id" value="<%= r.track_id %>">
-          <button type="submit">削除</button>
-        </form>
-      </li>
-    <% end %>
-  </ul>
-<% end %>
+          <div><strong>曲名:</strong> <%= r.track_name %></div>
+          <div><strong>アーティスト:</strong> <%= r.track_artists %></div>
+          <div><strong>トラックID:</strong> <%= r.track_id %></div>
+
+          <% if r.form.form_type == 'general' %>
+            <div class="mt-2"><strong>ニックネーム:</strong> <%= r.user_name %></div>
+          <% elsif r.form.form_type == 'school' %>
+            <div class="mt-2">
+              <div><strong>学年:</strong> <%= r.grade %></div>
+              <div><strong>クラス:</strong> <%= r.class_name %></div>
+              <div><strong>番号:</strong> <%= r.number %></div>
+              <div><strong>名前:</strong> <%= r.user_name %></div>
+            </div>
+          <% end %>
+
+          <form method="POST" action="/forms/<%= @form.form_key %>/tracks/<%= r.track_id %>" class="mt-3">
+            <input type="hidden" name="_method" value="delete">
+            <input type="hidden" name="form_key" value="<%= @form.form_key %>">
+            <input type="hidden" name="track_id" value="<%= r.track_id %>">
+            <button type="submit" class="btn btn-danger btn-sm">リクエストを削除</button>
+          </form>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
