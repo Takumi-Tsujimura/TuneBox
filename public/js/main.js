@@ -94,6 +94,7 @@ function openShareModal(formKey) {
     .then(response => response.text())
     .then(html => {
       document.getElementById('shareModalContent').innerHTML = html;
+      setupCopyLinks();  // ←ここ追加！！ モーダルを開いたあとにもイベントを付け直す
     })
     .catch(error => {
       console.error('エラー:', error);
