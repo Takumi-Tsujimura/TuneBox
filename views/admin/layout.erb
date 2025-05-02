@@ -27,7 +27,6 @@
       </a>
     </div>
 
-    <!-- 右側：ログイン・新規登録ボタン -->
     <!--<div class="auth-buttons">-->
     <!--  <% if session[:user_id] %>-->
     <!--    <a href="/admin" class="header-button">マイページ</a>-->
@@ -37,11 +36,6 @@
     <!--  <% end %>-->
     <!--</div>-->
   </header>
-  <div class="px-4">
-    <a href="/admin" style="color:black; text-decoration:none;">
-        <h1>TuneBox　管理者ページ</h1>
-    </a>
-  </div>
-    <%= yield %>
+  <%= yield %>
 </body>
 </html> 
