@@ -364,7 +364,6 @@ end
 
 get '/admin' do
   @title = "管理者ページ"
-  @header = "管理者ページ"
   # @forms = Form.all
   access_token = session[:access_token]
   
@@ -378,7 +377,6 @@ end
 
 get '/form_templates/new' do
   @title = "新規フォーム作成"
-  @header = "新規フォーム作成"
   ensure_valid_token  # トークンの有効性を確認・更新
   token = session[:access_token]
 
@@ -439,9 +437,7 @@ end
 
 get '/forms/:form_key/edit' do
   @title = "フォーム編集"
-  @header = "管理者ページ"
-  @h = "フォーム編集"
-  
+
   @form = Form.find_by(form_key: params[:form_key])
   
   ensure_valid_token  # トークンの有効性を確認・更新
@@ -521,25 +517,19 @@ end
 
 get '/login_form' do
   @title = "管理者ログイン"
-  @header = "管理者ページ"
-  @h = "管理者ログイン"
-  
+
   @notice = session.delete(:notice)
   erb :'admin/login_form', layout: :'admin/layout'
 end
 
 get '/signup_form' do
   @title = "新規アカウント作成"
-  @header = "管理者ページ"
-  @h = "新規管理者アカウント作成"
-  
+
   erb :'admin/signup_form', layout: :'admin/layout'
 end
 
 get "/user/edit" do
   @title = "アカウント情報 編集"
-  @header = "管理者ページ"
-  @h = "アカウント情報 編集"
   
   @user = User.find(session[:user_id])
   erb :'admin/user_edit_form', layout: :'admin/layout'
@@ -628,8 +618,6 @@ end
 
 get '/request_log/:form_key' do
   @title = "リクエストログ"
-  @header = "管理者ページ"
-  @h = "リクエストログ"
   
   @form = Form.find_by(form_key: params[:form_key])
   
