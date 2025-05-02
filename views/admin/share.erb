@@ -1,11 +1,11 @@
-<h5>共有リンク</h5>
+<h5>共有</h5>
 
 <!-- QRコードを表示 -->
 <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://tunebox.onrender.com/form/<%= @form_key %>" alt="QRコード" class="mb-3">
 
 <!-- リンクコピー -->
 <div class="mt-2">
-  <input type="text" value="https://tunebox.onrender.com/form/<%= @form_key %>" id="shareLink" readonly class="form-control">
+  <input type="hidden" value="https://tunebox.onrender.com/form/<%= @form_key %>" id="shareLink" readonly class="form-control">
   <button onclick="copyShareLink()" class="btn btn-primary btn-sm mt-2">リンクをコピー</button>
 </div>
 
