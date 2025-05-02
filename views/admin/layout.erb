@@ -10,15 +10,18 @@
   <link rel="icon" href="/img/TuneBox_icon.png" type="image/png">
   <title><%= @title || "管理者ページ" %></title>
     <style>
-        li {
-          list-style: none; /* 黒丸を消す */
-          padding: 0; /* 左側の余白をなくす（必要に応じて） */
-          margin: 0;
-        }
+      li {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        padding-top: 80px; /* ←ヘッダーの高さ分だけ上に余白をつける */
+      }
     </style>
 </head>
 <body>
-   <header class="d-flex align-items-center justify-content-between">
+   <header class="d-flex align-items-center justify-content-between" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1100; background-color: white; padding: 10px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <!-- 左側：アイコン＋アプリ名 -->
     <div class="d-flex align-items-center">
       <a href="/" class="d-flex align-items-center text-decoration-none text-dark">
