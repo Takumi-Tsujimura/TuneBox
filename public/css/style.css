@@ -64,3 +64,8 @@ section {
   margin: 0;
   line-height: 1; 
 }
+
+.section-title{
+  margin-top: 14px;
+  margin-bottom: 17px;
+}
