@@ -1,6 +1,6 @@
 <style>
   .modal {
-    display: none; /* ←これを復活させる！ */
+    display: none;
     position: fixed;
     z-index: 1001;
     inset: 0;
@@ -10,17 +10,26 @@
     padding: 1rem;
     box-sizing: border-box;
   }
-    
+  
   .modal-content {
     position: relative;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    max-width: 800px;
     width: 100%;
+    max-width: 600px; /* PCやiPadでは600pxまで */
     text-align: left;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transform: translateY(-20%);
+  }
+
+  /* スマホ（横幅576px以下）だけ特別ルール */
+  @media (max-width: 576px) {
+    .modal-content {
+      max-width: 90%; /* スマホは画面の90%サイズにする */
+      transform: translateY(0); /* 上に浮きすぎないように調整 */
+      padding: 15px; /* スマホはpaddingも少し小さくする */
+    }
   }
 </style>
 

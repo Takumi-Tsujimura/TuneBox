@@ -615,6 +615,11 @@ end
 get '/request_log/:form_key' do
   @title = "リクエストログ"
   @form = Form.find_by(form_key: params[:form_key])
+  
+  if session[:user_id].nil?
+    redirect '/login_form'
+  end
+  
   halt(404, "フォームが見つかりません") unless @form
   
   @requests = Request.where(form_key: @form.form_key).order(created_at: :desc)
