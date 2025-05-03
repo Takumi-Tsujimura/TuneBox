@@ -169,3 +169,28 @@ ul {
   color: white;
   padding: 0px 20px 50px 20px;
 }
+
+/* create_formの中だけに表示するモーダル */
+.custom-modal {
+  display: none;
+  position: absolute; /* fixedじゃなくabsolute！！ */
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  background: rgba(0,0,0,0.5); /* 半透明黒背景 */
+  z-index: 10;
+  justify-content: center;
+  align-items: center;
+}
+
+/* モーダルの中身 */
+.custom-modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  margin: 50px auto;
+  position: relative;
+}
