@@ -107,14 +107,16 @@ function closeShareModal() {
 
 // ===== プレイリストモーダルを開く =====
 function openPlaylistModal() {
-  console.log('openPlaylistModal呼び出し！');
   fetch('/add_playlist_form')
     .then(response => response.text())
     .then(html => {
-      console.log('フォーム読み込み成功！');
-      document.getElementById('playlistModalContent').innerHTML = html;
+      const playlistModalContent = document.getElementById('playlistModalContent');
+      if (playlistModalContent) {
+        playlistModalContent.innerHTML = html;
+      } else {
+        console.error('playlistModalContentが見つからない');
+      }
       openModal('playlistModal');  
-      console.log('モーダルオープン！');
     })
     .catch(error => {
       console.error('フォームの読み込みに失敗しました:', error);
