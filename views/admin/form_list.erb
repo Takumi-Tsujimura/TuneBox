@@ -123,11 +123,13 @@
   </div>
 </div>
 
-<div id="shareModal" class="modal">
-  <div class="modal-content share-modal-content p-4 rounded bg-white position-relative">
+<div id="shareModal" class="modal" style="display: none;">
+  <div class="modal-content p-4 rounded bg-white position-relative" 
+       style="width: 90%; max-width: 400px; max-height: 80vh; margin: 100px auto; border: 1px solid #ccc; overflow-y: auto;">
        
     <!-- 閉じるボタン -->
-    <button type="button" onclick="closeShareModal()" class="btn-close" aria-label="Close"></button>
+    <button type="button" onclick="closeShareModal()" 
+            style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
               
     <!-- モーダル内にコンテンツを読み込む場所 -->
     <div id="shareModalContent"></div>
