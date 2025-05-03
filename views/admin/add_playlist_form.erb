@@ -2,7 +2,7 @@
   <form method="POST" action="/create_playlist">
     <div class="mb-3">
       <label for="playlist_name" class="form-label">プレイリスト名</label>
-      <input type="text" name="playlist_name" id="playlist_name" class="form-control" required>
+      <input type="text" name="playlist_name" id="playlist_name" class="form-control" placeholder="プレイリスト名を入力" required>
       <input type="hidden" name="spotify_user_id" id="spotify_user_id" value="<%= @spotify_user_id %>">
     </div>
 
