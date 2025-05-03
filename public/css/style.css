@@ -17,7 +17,7 @@ body {
 /* セクション中央揃え */
 section {
   text-align: center;
-  margin-top: 50px;
+  margin-top: 0px;
 }
 
 /* ヘッダーのアプリアイコン */
@@ -163,6 +163,9 @@ ul {
   background-color: rgba(255, 255, 255, 0.4);
 }
 
-section {
-  margin-top: 0px;
+.usage-guide {
+  margin: 0px;
+  background-color: black;
+  color: white;
+  padding: 0px 20px 50px 20px;
 }

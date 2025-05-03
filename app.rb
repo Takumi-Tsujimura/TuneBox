@@ -403,6 +403,42 @@ get '/form_templates/new' do
   erb :'admin/create_form', layout: :'admin/layout'
 end
 
+get '/add_playlist' do
+  user = User.find(session[:user_id])
+  @spotify_user_id = user.spotify_uid
+  
+  erb :'admin/add_playlist', layout: false
+end
+
+post '/create_playlist' do
+  playlist_name = params[:playlist_name]
+  spotify_user_id = params[:spotify_user_id]
+
+  user = User.find(session[:user_id])
+  access_token = user.spotify_access_token
+
+  uri = URI("https://api.spotify.com/v1/users/#{spotify_user_id}/playlists")
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+
+  request = Net::HTTP::Post.new(uri.request_uri)
+  request['Authorization'] = "Bearer #{access_token}"
+  request['Content-Type'] = 'application/json'
+  
+  request.body = {
+    name: playlist_name,
+    description: "New playlist created by TuneBox!", 
+    public: false
+  }.to_json
+
+  response = http.request(request)
+
+  if response.code == "201" 
+    redirect '/form_templates/new'
+  else
+    "プレイリスト作成に失敗しました: #{response.body}"
+  end
+end
 
 post '/form_templates' do
   user_id = session[:user_id]

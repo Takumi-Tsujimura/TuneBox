@@ -1,0 +1,12 @@
+<div>
+  <form method="POST" action="/create_playlist">
+    <div>
+      <input type="text" name="spotify_user_id" id="spotify_user_id" value="<%= @spotify_user_id %>">
+      <div>
+        <label for="playlist_name">プレイリスト名</label>
+        <input type="text" name="playlist_name" id="playlist_name" required>
+      </div>
+      <button type="submit">作成する</button>
+    </div>
+  </form>
+</div>
