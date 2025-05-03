@@ -170,16 +170,17 @@ ul {
   padding: 0px 20px 50px 20px;
 }
 
-/* create_formの中だけに表示するモーダル */
+
 .custom-modal {
   display: none;
-  position: absolute; /* fixedじゃなくabsolute！！ */
+  position: fixed; /* fixedで画面中央に */
   top: 0;
   left: 0;
   width: 100%;
-  min-height: 100%;
-  background: rgba(0,0,0,0.5); /* 半透明黒背景 */
-  z-index: 10;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 背景を暗く */
+  z-index: 1050; /* Bootstrapモーダルに合わせておく */
+  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -187,10 +188,18 @@ ul {
 /* モーダルの中身 */
 .custom-modal-content {
   background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  width: 100%;
+  border-radius: 0.5rem;
+  width: 90%;
   max-width: 500px;
-  margin: 50px auto;
   position: relative;
+}
+
+/* 閉じるボタンを右上に */
+.custom-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
