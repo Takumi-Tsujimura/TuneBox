@@ -39,7 +39,7 @@ function setupCopyLinks() {
 function openModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
-    modal.style.display = 'block';
+    modal.style.display = 'flex'; // ←ここが大事！！
   }
 }
 
@@ -94,7 +94,7 @@ function openShareModal(formKey) {
     .then(response => response.text())
     .then(html => {
       document.getElementById('shareModalContent').innerHTML = html;
-      setupCopyLinks();  // ←ここ追加！！ モーダルを開いたあとにもイベントを付け直す
+      setupCopyLinks();
     })
     .catch(error => {
       console.error('エラー:', error);
