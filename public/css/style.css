@@ -245,3 +245,23 @@ ul {
   background-color: rgba(0, 0, 0, 0.5); /* 半透明黒 */
   z-index: 1040; /* モーダル本体より少し下の層 */
 }
+
+#shareModalContent {
+  text-align: center; /* 中央揃え */
+}
+
+#shareModalContent img {
+  width: auto;
+  max-width: 200px; /* QRコードの最大サイズを小さく */
+  height: auto;
+  margin-bottom: 20px;
+}
+
+#shareModalContent input.form-control {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#shareModalContent .btn {
+  width: auto;
+}
