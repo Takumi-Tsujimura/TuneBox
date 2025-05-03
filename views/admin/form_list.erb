@@ -82,12 +82,13 @@
   </div>
 </div>
 
-<!-- プレイリスト作成用モーダル -->
-<div id="playlistModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <button type="button" class="btn-close" aria-label="Close" onclick="closeModal('playlistModal')">&times;</button>
-    <div id="playlistModalContent">
-      <!-- フォームをここに読み込み -->
-    </div>
+<div id="shareModal" class="modal">
+  <div class="modal-content share-modal-content p-4 rounded bg-white position-relative">
+       
+    <!-- 閉じるボタン -->
+    <button type="button" onclick="closeShareModal()" class="btn-close" aria-label="Close">&times;</button>
+              
+    <!-- モーダル内にコンテンツを読み込む場所 -->
+    <div id="shareModalContent"></div>
   </div>
 </div>
