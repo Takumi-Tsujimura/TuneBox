@@ -195,7 +195,6 @@ ul {
   position: relative;
 }
 
-/* 閉じるボタン */
 .custom-close {
   position: absolute;
   top: 10px;
@@ -206,8 +205,12 @@ ul {
   background: none;
   border: none;
   cursor: pointer;
+  padding: 5px;
+  line-height: 1;
 }
 
 .custom-close:hover {
   color: #000;
+  background-color: #eee;
+  border-radius: 50%;
 }
