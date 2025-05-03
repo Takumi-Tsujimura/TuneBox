@@ -92,14 +92,14 @@ section {
   padding: 20px;
   border-radius: 0.5rem;
   width: 90%;
-  max-width: 400px;  /* ←ここ重要 */
+  max-width: 400px;  
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
   margin: auto;
   display: flex;
   flex-direction: column;
-  align-items: center; /* ←ここ追加で中央寄せ */
+  align-items: center; 
 }
 
 .btn-close {
@@ -116,12 +116,12 @@ section {
 }
 
 .btn-close:hover {
-  color: #000;
+  color: black;
 }
 
 ul {
-  list-style: none; /* 黒丸を消す */
-  padding: 0; /* 左側の余白をなくす（必要に応じて） */
+  list-style: none; 
+  padding: 0; 
   margin: 0;
 }
 
@@ -156,7 +156,7 @@ ul {
   padding: 90px 20px;
   text-align: center;
   color: white;
-  width: 100%; /* 横幅いっぱいに */
+  width: 100%; 
 }
 
 /* 画像には色をかけない */
@@ -185,13 +185,13 @@ ul {
 
 /* モーダルの外枠 */
 .custom-modal {
-  display: none; /* 最初は非表示 */
+  display: none; 
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 背景を半透明黒に */
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1050;
   display: flex;
   justify-content: center;
