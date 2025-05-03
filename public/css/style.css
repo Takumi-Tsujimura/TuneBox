@@ -153,11 +153,6 @@ form label {
   display: block; /* ← インライン要素からブロック要素にする必要がある！ */
 }
 
-form input.form-control {
-  max-width: 90%;
-  margin: 0 auto;
-}
-
 /* 見出しだけ左寄せ */
 #shareModalContent h5 {
   text-align: left;
