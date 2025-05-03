@@ -1,3 +1,5 @@
+/* --- 全体レイアウト --- */
+
 /* ヘッダー固定 */
 header {
   position: fixed;
@@ -14,13 +16,13 @@ body {
   padding-top: 80px;
 }
 
-/* セクション中央揃え */
 section {
   text-align: center;
   margin-top: 0px;
 }
 
-/* ヘッダーのアプリアイコン */
+/* --- ヘッダー内アイコン・ボタン --- */
+
 .app-icon {
   width: 60px;
   height: 60px;
@@ -28,14 +30,6 @@ section {
   margin-right: 10px;
 }
 
-/* セクションの大きいアイコン */
-.section-icon {
-  width: 300px;
-  height: 300px;
-  object-fit: cover;
-}
-
-/* ヘッダーのリンク風ボタン */
 .header-button {
   border: none;
   background: none;
@@ -49,20 +43,26 @@ section {
   text-decoration: underline;
 }
 
-/* セクションの小さいボタン */
-.section-button {
-  font-size: 0.8rem; /* さらに小さめに調整 */
-  padding: 4px 12px; /* コンパクトに */
-  margin: 0 5px;
-}
-
-/* ヘッダーのアプリタイトル */
 .app-title {
-  font-size: 2.5rem; 
+  font-size: 2.5rem;
   font-weight: 500;
   color: #333;
   margin: 0;
-  line-height: 1; 
+  line-height: 1;
+}
+
+/* --- セクションデザイン --- */
+
+.section-icon {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+}
+
+.section-button {
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  margin: 0 5px;
 }
 
 .section-title h3 {
@@ -72,34 +72,87 @@ section {
   margin-top: 12px;
 }
 
-/* モーダルのスタイル */
+.header-background {
+  background-image: url('../img/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 90px 20px;
+  text-align: center;
+  color: white;
+  width: 100%;
+}
+
+.header-background img {
+  filter: none;
+}
+
+.header-background .btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid white;
+  color: white;
+}
+
+.header-background .btn:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.detail {
+  padding-top: 50px;
+  padding-bottom: 50px;
+  color: white;
+  background-color: black;
+}
+
+.detail-content {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .detail-content {
+    font-size: 13px;
+  }
+}
+
+.usage-guide {
+  margin: 0;
+  background-color: black;
+  color: white;
+  padding: 0 20px 50px 20px;
+}
+
+/* --- ポップアップ（モーダル） --- */
+
 .modal {
   display: none;
   position: fixed;
-  z-index: 1050;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
-/* モーダルの中身 */
 .modal-content {
+  position: relative;
   background-color: #fff;
   padding: 20px;
-  border-radius: 0.5rem;
-  width: 90%;
-  max-width: 400px;  
-  max-height: 80vh;
-  overflow-y: auto;
-  position: relative;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  text-align: left;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transform: translateY(-20%);
+}
+
+@media (max-width: 576px) {
+  .modal-content {
+    max-width: 90%;
+    transform: translateY(0);
+    padding: 15px;
+  }
 }
 
 .btn-close {
@@ -119,111 +172,49 @@ section {
   color: #000;
 }
 
-ul {
-  list-style: none; 
-  padding: 0; 
-  margin: 0;
-}
+/* --- サイドメニュー --- */
 
-.detail{
-  padding-top: 50px;
-  padding-bottom: 50px;
-  color: white;
-  background-color: black;
-}
-
-.usage-guide{
-  margin-top: 50px;
-  margin-bottom: 100px;
-}
-
-.detail-content {
-  font-size: 16px;
-}
-
-/* 画面幅が768px以下（タブレット・スマホ）のとき */
-@media (max-width: 768px) {
-  .detail-content {
-    font-size: 13px;
-  }
-}
-
-.header-background {
-  background-image: url('../img/background.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  padding: 90px 20px;
-  text-align: center;
-  color: white;
-  width: 100%; 
-}
-
-/* 画像には色をかけない */
-.header-background img {
-  filter: none;
-}
-
-/* ボタンを白く調整 */
-.header-background .btn {
-  background-color: rgba(255, 255, 255, 0.2);
-  border: 1px solid white;
-  color: white;
-}
-
-/* ボタンのhover時 */
-.header-background .btn:hover {
-  background-color: rgba(255, 255, 255, 0.4);
-}
-
-.usage-guide {
-  margin: 0px;
-  background-color: black;
-  color: white;
-  padding: 0px 20px 50px 20px;
-}
-
-/* モーダルの外枠 */
-.custom-modal {
-  display: none; 
+#menu {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1050;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* モーダルの中身 */
-.custom-modal-content {
-  background: #fff;
-  border-radius: 0.5rem;
-  width: 90%;
-  max-width: 500px;
+  top: 70px;
+  right: -250px;
+  width: 250px;
+  height: calc(100% - 70px);
+  background-color: white;
+  border-left: 1px solid #ccc;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.2);
   padding: 20px;
-  position: relative;
+  transition: right 0.3s;
+  z-index: 999;
 }
 
-.custom-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
+#menu.open {
+  right: 0;
+}
+
+#menuButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  transition: right 0.3s;
+}
+
+.menu-open #menuButton {
+  right: 270px;
+}
+
+#menu h5 {
   font-weight: bold;
-  color: #666;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-  line-height: 1;
+  color: #333;
 }
 
-.custom-close:hover {
-  color: #000;
-  background-color: #eee;
-  border-radius: 50%;
+#menu form button {
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
