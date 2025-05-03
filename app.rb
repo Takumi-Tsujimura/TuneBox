@@ -412,10 +412,15 @@ end
 
 post '/create_playlist' do
   playlist_name = params[:playlist_name]
-  spotify_user_id = params[:spotify_user_id]
 
-  user = User.find(session[:user_id])
-  access_token = user.spotify_access_token
+  form_owner = User.find(session[:user_id])
+
+  if form_owner.spotify_expires_at.nil? || Time.now > form_owner.spotify_expires_at
+    refresh_user_access_token(form_owner)
+  end
+
+  access_token = form_owner.spotify_access_token
+  spotify_user_id = form_owner.spotify_uid
 
   uri = URI("https://api.spotify.com/v1/users/#{spotify_user_id}/playlists")
   http = Net::HTTP.new(uri.host, uri.port)
@@ -424,17 +429,21 @@ post '/create_playlist' do
   request = Net::HTTP::Post.new(uri.request_uri)
   request['Authorization'] = "Bearer #{access_token}"
   request['Content-Type'] = 'application/json'
-  
   request.body = {
     name: playlist_name,
-    description: "New playlist created by TuneBox!", 
+    description: "New playlist created by TuneBox!",
     public: false
   }.to_json
 
   response = http.request(request)
 
-  if response.code == "201" 
-    redirect '/form_templates/new'
+  if response.code == "201"
+    playlist_info = JSON.parse(response.body)
+    playlist_id = playlist_info["id"]
+
+    session[:new_playlist_id] = playlist_id
+
+    redirect '/form_templates/new'  
   else
     "プレイリスト作成に失敗しました: #{response.body}"
   end

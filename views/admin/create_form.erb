@@ -41,15 +41,15 @@
                 <label class="form-check-label"><%= playlist["name"] %></label>
                 <input class="form-check-input" type="radio" name="playlist_id" value="<%= playlist["id"] %>" required>
               </div>
-              <div class="mt-2">
-                <a href="/add_playlist" class="btn btn-success btn-sm">新規プレイリスト作成</a>
-              </div>
               <% end %>
             </li>
           </div>
         <% else %>
           <p>プレイリストが取得できませんでした。</p>
         <% end %>
+        <div class="mt-2">
+          <a href="/add_playlist" class="btn btn-success btn-sm">新規プレイリスト作成</a>
+        </div>
       </div>
 
       <div class="d-flex" style="gap: 5px;">
