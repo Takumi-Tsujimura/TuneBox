@@ -140,13 +140,46 @@ section {
 .modal-content {
   background-color: #fff;
   border-radius: 10px;
-  max-width: 500px;
+  max-width: 400px;
   width: 100%;
   padding: 30px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   position: relative;
+  text-align: center;
+}
+
+/* --- 共有モーダル専用の中身デザイン --- */
+#shareModalContent {
+  text-align: center;
+}
+
+/* 見出しだけ左寄せ */
+#shareModalContent h5 {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+/* QRコード画像 */
+#shareModalContent img {
+  width: auto;
+  max-width: 150px; 
+  height: auto;
+  margin-bottom: 20px;
+}
+
+/* リンク入力フォーム */
+#shareModalContent input.form-control {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* コピー用ボタンだけ左寄せにする */
+#shareModalContent .copy-link {
+  display: block;
+  margin-top: 10px;
   text-align: left;
 }
+
 
 .btn-close {
   position: absolute;
@@ -242,26 +275,7 @@ ul {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 半透明黒 */
-  z-index: 1040; /* モーダル本体より少し下の層 */
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 1040; 
 }
 
-#shareModalContent {
-  text-align: center; /* 中央揃え */
-}
-
-#shareModalContent img {
-  width: auto;
-  max-width: 200px; /* QRコードの最大サイズを小さく */
-  height: auto;
-  margin-bottom: 20px;
-}
-
-#shareModalContent input.form-control {
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-#shareModalContent .btn {
-  width: auto;
-}
