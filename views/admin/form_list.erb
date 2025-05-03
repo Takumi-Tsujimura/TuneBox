@@ -82,13 +82,15 @@
   </div>
 </div>
 
-<div id="shareModal" class="modal">
-  <div class="modal-content share-modal-content p-4 rounded bg-white position-relative">
-       
+<!-- 共有用モーダル -->
+<div id="shareModal" class="modal" style="display: none;">
+  <div class="modal-content p-4 rounded bg-white position-relative">
     <!-- 閉じるボタン -->
-    <button type="button" onclick="closeShareModal()" class="btn-close" aria-label="Close">&times;</button>
-              
-    <!-- モーダル内にコンテンツを読み込む場所 -->
-    <div id="shareModalContent"></div>
+    <button type="button" onclick="closeModal('shareModal')" class="btn-close" aria-label="閉じる">&times;</button>
+
+    <!-- モーダル内コンテンツ -->
+    <div id="shareModalContent">
+      <!-- share.erbがここに読み込まれる -->
+    </div>
   </div>
 </div>
