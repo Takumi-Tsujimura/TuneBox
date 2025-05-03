@@ -148,21 +148,11 @@ section {
   text-align: center;
 }
 
-/* --- 共有モーダル専用の中身デザイン --- */
-#shareModalContent {
-  text-align: center;
-}
 
 /* 見出しだけ左寄せ */
 #shareModalContent h5 {
   text-align: left;
   margin-bottom: 20px;
-}
-
-/* リンク入力フォーム */
-#shareModalContent input.form-control {
-  width: 100%;
-  margin-bottom: 10px;
 }
 
 /* コピー用ボタンだけ左寄せにする */
