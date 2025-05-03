@@ -118,7 +118,7 @@ function openPlaylistModal() {
       const playlistModalContent = document.getElementById('playlistModalContent');
       if (playlistModalContent) {
         playlistModalContent.innerHTML = html;
-        openModal('playlistModal'); // ★ここをhtmlをセットしてから呼ぶ！！
+        openModal('playlistModal'); 
       } else {
         console.error('playlistModalContentが見つからない');
       }
