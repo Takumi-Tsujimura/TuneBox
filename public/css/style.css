@@ -153,12 +153,6 @@ form label {
   display: block; /* ← インライン要素からブロック要素にする必要がある！ */
 }
 
-#playlistModal input.form-control {
-  width: 260px; /* 固定幅を指定する */
-  max-width: 100%;
-  margin: 0 auto;
-}
-
 /* 見出しだけ左寄せ */
 #shareModalContent h5 {
   text-align: left;
