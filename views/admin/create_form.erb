@@ -48,7 +48,7 @@
           <p>プレイリストが取得できませんでした。</p>
         <% end %>
         <div class="mt-2">
-          <a href="/add_playlist" class="btn btn-success btn-sm">新規プレイリスト作成</a>
+          <button type="button" class="btn btn-success btn-sm" onclick="openPlaylistModal()">新規プレイリスト作成</button>
         </div>
       </div>
 
@@ -61,3 +61,17 @@
   </div>
 </div>
 
+<!-- プレイリスト作成用モーダル -->
+<div class="modal fade" id="playlistModal" tabindex="-1" aria-labelledby="playlistModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="playlistModalLabel">新規プレイリスト作成</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+      </div>
+      <div class="modal-body" id="playlistModalContent">
+        <!-- ここにadd_playlist_form.erbの中身を動的に入れる -->
+      </div>
+    </div>
+  </div>
+</div>

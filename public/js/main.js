@@ -104,3 +104,19 @@ function openShareModal(formKey) {
 function closeShareModal() {
   closeModal('shareModal');
 }
+
+// ===== プレイリスト作成用モーダルを開く =====
+function openPlaylistModal() {
+  const modalContent = document.getElementById('playlistModalContent');
+
+  fetch('/add_playlist_form')  // ← このエンドポイントからフォームを取得する
+    .then(response => response.text())
+    .then(html => {
+      modalContent.innerHTML = html;
+      const playlistModal = new bootstrap.Modal(document.getElementById('playlistModal'));
+      playlistModal.show();
+    })
+    .catch(error => {
+      console.error('プレイリスト作成フォームの取得に失敗しました:', error);
+    });
+}
