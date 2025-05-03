@@ -403,11 +403,11 @@ get '/form_templates/new' do
   erb :'admin/create_form', layout: :'admin/layout'
 end
 
-get '/add_playlist' do
+get '/add_playlist_form' do
   user = User.find(session[:user_id])
   @spotify_user_id = user.spotify_uid
   
-  erb :'admin/add_playlist', layout: false
+  erb :'admin/add_playlist_form', layout: false
 end
 
 post '/create_playlist' do
