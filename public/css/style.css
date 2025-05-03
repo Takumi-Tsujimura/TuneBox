@@ -172,18 +172,18 @@ ul {
 
 
 .custom-modal {
-  display: none;
-  position: fixed; /* fixedで画面中央に */
+  display: none; /* これだけ！ flexはopenModal()で付ける */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 背景を暗く */
-  z-index: 1050; /* Bootstrapモーダルに合わせておく */
-  display: flex;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
   justify-content: center;
   align-items: center;
 }
+
 
 /* モーダルの中身 */
 .custom-modal-content {

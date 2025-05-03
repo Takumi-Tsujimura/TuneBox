@@ -108,7 +108,12 @@ function closeShareModal() {
 // ===== プレイリストモーダルを開く =====
 function openPlaylistModal() {
   fetch('/add_playlist_form')
-    .then(response => response.text())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('ネットワークエラー');
+      }
+      return response.text();
+    })
     .then(html => {
       const playlistModalContent = document.getElementById('playlistModalContent');
       if (playlistModalContent) {
@@ -116,7 +121,7 @@ function openPlaylistModal() {
       } else {
         console.error('playlistModalContentが見つからない');
       }
-      openModal('playlistModal');  
+      openModal('playlistModal');
     })
     .catch(error => {
       console.error('フォームの読み込みに失敗しました:', error);
