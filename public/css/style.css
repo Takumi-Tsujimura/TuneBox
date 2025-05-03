@@ -149,49 +149,57 @@ ul {
    モーダル（共通）
 ======================= */
 
-/* モーダル全体 */
-.modal, .custom-modal {
+/* 共有モーダル全体 */
+#shareModal {
   display: none; /* 最初は非表示 */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 半透明黒 */
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1050;
   justify-content: center;
   align-items: center;
 }
 
 /* モーダルの中身 */
-.modal-content, .custom-modal-content {
-  background-color: #fff;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #888;
+#shareModal .modal-content {
+  background: #fff;
+  padding: 20px 15px;
+  border-radius: 0.5rem;
   width: 90%;
   max-width: 400px;
-  max-height: 80vh; /* 高さ制限！ */
-  overflow-y: auto; /* 長いときだけスクロール */
-  border-radius: 4px; /* 少しだけ角丸 */
+  max-height: 80vh;
+  overflow-y: auto;
   position: relative;
+  text-align: center; /* 中身を中央揃え */
 }
 
 /* 閉じるボタン */
-.modal-content button, .custom-close {
+#shareModal .btn-close {
   position: absolute;
   top: 10px;
   right: 10px;
-  font-size: 24px;
-  font-weight: bold;
-  background: none;
-  border: none;
-  color: #aaa;
-  cursor: pointer;
 }
 
-.modal-content button:hover, .custom-close:hover {
-  color: black;
+/* QRコード画像 */
+#shareModal img {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+/* コピー用ボタン */
+#shareModal .copy-link {
+  width: 100%;
+}
+
+/* タイトル */
+#shareModal h5 {
+  margin-bottom: 20px;
+  font-weight: bold;
 }
 
 /* =======================
