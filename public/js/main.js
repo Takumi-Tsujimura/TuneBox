@@ -105,18 +105,15 @@ function closeShareModal() {
   closeModal('shareModal');
 }
 
-// ===== プレイリスト作成用モーダルを開く =====
+// ===== プレイリストモーダルを開く =====
 function openPlaylistModal() {
-  const modalContent = document.getElementById('playlistModalContent');
-
-  fetch('/add_playlist_form')  // ← このエンドポイントからフォームを取得する
+  fetch('/add_playlist_form')
     .then(response => response.text())
     .then(html => {
-      modalContent.innerHTML = html;
-      const playlistModal = new bootstrap.Modal(document.getElementById('playlistModal'));
-      playlistModal.show();
+      document.getElementById('playlistModalContent').innerHTML = html;
+      openModal('playlistModal');  // 自作関数でモーダルを開く！！
     })
     .catch(error => {
-      console.error('プレイリスト作成フォームの取得に失敗しました:', error);
+      console.error('フォームの読み込みに失敗しました:', error);
     });
 }
