@@ -107,11 +107,14 @@ function closeShareModal() {
 
 // ===== プレイリストモーダルを開く =====
 function openPlaylistModal() {
+  console.log('openPlaylistModal呼び出し！');
   fetch('/add_playlist_form')
     .then(response => response.text())
     .then(html => {
+      console.log('フォーム読み込み成功！');
       document.getElementById('playlistModalContent').innerHTML = html;
-      openModal('playlistModal');  // 自作関数でモーダルを開く！！
+      openModal('playlistModal');  
+      console.log('モーダルオープン！');
     })
     .catch(error => {
       console.error('フォームの読み込みに失敗しました:', error);
