@@ -148,6 +148,11 @@ section {
   text-align: center;
 }
 
+form label {
+  text-align: left;
+  display: block; /* ← インライン要素からブロック要素にする必要がある！ */
+}
+
 
 /* 見出しだけ左寄せ */
 #shareModalContent h5 {
