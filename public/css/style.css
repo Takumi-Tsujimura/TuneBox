@@ -140,9 +140,9 @@ section {
 .modal-content {
   background-color: #fff;
   border-radius: 10px;
-  max-width: 400px;
+  max-width: 300px; /* ★ここを300pxにする！（今たぶん350～400px） */
   width: 100%;
-  padding: 30px;
+  padding: 25px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   position: relative;
   text-align: center;
@@ -156,14 +156,6 @@ section {
 /* 見出しだけ左寄せ */
 #shareModalContent h5 {
   text-align: left;
-  margin-bottom: 20px;
-}
-
-/* QRコード画像 */
-#shareModalContent img {
-  width: auto;
-  max-width: 150px; 
-  height: auto;
   margin-bottom: 20px;
 }
 
