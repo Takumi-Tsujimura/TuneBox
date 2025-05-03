@@ -118,10 +118,10 @@ function openPlaylistModal() {
       const playlistModalContent = document.getElementById('playlistModalContent');
       if (playlistModalContent) {
         playlistModalContent.innerHTML = html;
+        openModal('playlistModal'); // ★ここをhtmlをセットしてから呼ぶ！！
       } else {
         console.error('playlistModalContentが見つからない');
       }
-      openModal('playlistModal');
     })
     .catch(error => {
       console.error('フォームの読み込みに失敗しました:', error);
