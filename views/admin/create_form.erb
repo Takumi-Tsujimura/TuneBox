@@ -21,12 +21,12 @@
         <legend class="col-form-label col-sm-2 pt-0">フォームタイプ</legend>
         <div class="col-sm-10">
           <div class="form-check">
-            <label class="form-check-label" for="form_type_general">一般</label>
             <input type="radio" class="form-check-input" name="form_type" id="form_type_general" value="general" required>
+            <label class="form-check-label" for="form_type_general">一般</label>
           </div>
-          <div class="form-check"> 
-            <label class="form-check-label" for="form_type_school">学校用</label>
+          <div class="form-check">
             <input type="radio" class="form-check-input" name="form_type" id="form_type_school" value="school" required>
+            <label class="form-check-label" for="form_type_school">学校用</label>
           </div>
         </div>
         <p style="font-size: 11px;">※学校用を選択すると学年、クラス、番号、名前を入力する必要があります。一般を選択した場合任意でニックネームを入力することができます。</p>
@@ -38,8 +38,8 @@
             <li>
               <% @playlists.each do |playlist| %>
               <div class="form-check">
-                <label class="form-check-label"><%= playlist["name"] %></label>
                 <input class="form-check-input" type="radio" name="playlist_id" value="<%= playlist["id"] %>" required>
+                <label class="form-check-label"><%= playlist["name"] %></label>
               </div>
               <% end %>
             </li>
