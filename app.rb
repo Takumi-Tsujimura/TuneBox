@@ -203,46 +203,80 @@ get '/callback' do
   end
 end
 
-def get_top_tracks(token)
-  uri = URI("https://api.spotify.com/v1/browse/new-releases?country=JP&limit=20") # limitちょっと多めにしておく
+def clear_playlist(token, playlist_id)
+  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks")
+  
+  req = Net::HTTP::Put.new(uri)
+  req['Authorization'] = "Bearer #{token}"
+  req['Content-Type'] = 'application/json'
+  req.body = { uris: [] }.to_json
+  
+  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+  
+  if res.is_a?(Net::HTTPSuccess)
+    puts "[INFO] プレイリストをクリアしました"
+    true
+  else
+    puts "[ERROR] プレイリストクリア失敗: #{res.code} #{res.body}"
+    false
+  end
+end
+
+
+def fetch_top50_tracks(token)
+  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq" # ← Top50 JapanのID
+  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?limit=50")
+
   req = Net::HTTP::Get.new(uri)
   req['Authorization'] = "Bearer #{token}"
 
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
   if res.is_a?(Net::HTTPSuccess)
-    albums = JSON.parse(res.body)['albums']['items']
-    tracks = []
-
-    albums.each do |album|
-      album_id = album["id"]
-      album_images = album["images"]
-
-      # アルバム内の最初の曲だけ取る
-      track_uri = URI("https://api.spotify.com/v1/albums/#{album_id}/tracks?limit=1")
-      track_req = Net::HTTP::Get.new(track_uri)
-      track_req['Authorization'] = "Bearer #{token}"
-
-      track_res = Net::HTTP.start(track_uri.hostname, track_uri.port, use_ssl: true) { |http| http.request(track_req) }
-      if track_res.is_a?(Net::HTTPSuccess)
-        track_data = JSON.parse(track_res.body)['items'].first
-        if track_data
-          # 日本語フィルターをかける
-          track_name = track_data["name"]
-          artist_names = track_data["artists"].map { |a| a["name"] }.join(" ")
-
-          if track_name =~ /[ぁ-んァ-ン一-龥]/ || artist_names =~ /[ぁ-んァ-ン一-龥]/
-            track_data["album"] = { "images" => album_images }
-            tracks << track_data
-          end
-        end
-      end
-    end
-
-    # 最終的に10曲だけに絞る
-    tracks.first(10)
+    JSON.parse(res.body)["items"].map { |item| item["track"]["uri"] }
   else
+    puts "[ERROR] Top50取得失敗: #{res.code} #{res.body}"
     []
+  end
+end
+
+def add_tracks_to_playlist(token, playlist_id, track_uris)
+  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks")
+
+  req = Net::HTTP::Post.new(uri)
+  req['Authorization'] = "Bearer #{token}"
+  req['Content-Type'] = 'application/json'
+  req.body = { uris: track_uris }.to_json
+
+  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+
+  if res.is_a?(Net::HTTPSuccess)
+    puts "[INFO] プレイリストへの追加成功"
+    true
+  else
+    puts "[ERROR] プレイリストへの追加失敗: #{res.code} #{res.body}"
+    false
+  end
+end
+
+post '/admin/copy_top50' do
+  ensure_valid_token
+  token = session[:access_token]
+  
+  # 取得する
+  top50_tracks = fetch_top50_tracks(token)
+  if top50_tracks.empty?
+    return "Top50の曲が取得できませんでした。"
+  end
+
+  # 追加する
+  my_playlist_id = "39Ps1NByczAnjX5PgHfSxi" # あなたのプレイリストID
+  success = add_tracks_to_playlist(token, my_playlist_id, top50_tracks)
+
+  if success
+    redirect '/admin', notice: 'Top50をコピーしました！'
+  else
+    "コピーに失敗しました。"
   end
 end
 
@@ -262,13 +296,21 @@ get '/form/:form_key' do
     redirect '/error'
   end
 
-  # --- ここからNew Releases用の追加 ---
+  # --- Top50コピー処理 ---
   form_owner = @form.user
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
-
+  
   token = form_owner.spotify_access_token
-  @top_tracks = get_top_tracks(token)
-  # --- ここまで追加 ---
+
+  my_playlist_id = "39Ps1NByczAnjX5PgHfSxi" # ← あなたのプレイリストID
+
+  top50_tracks = fetch_top50_tracks(token)
+
+  unless top50_tracks.empty?
+    clear_playlist(token, my_playlist_id) # ← ここで一度中身を全部消して
+    add_tracks_to_playlist(token, my_playlist_id, top50_tracks) # ← そこにTop50だけ入れる
+  end
+  # --- ここまで ---
 
   erb :'users/show', layout: :'users/layout'
 end
