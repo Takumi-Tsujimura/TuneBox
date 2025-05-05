@@ -238,16 +238,31 @@ get '/form/:form_key' do
     redirect '/error'
   end
 
-  # --- ここから追加：最近人気の曲を取得する処理 ---
   form_owner = @form.user
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
 
   token = form_owner.spotify_access_token
-  @top_tracks = get_top_tracks(token) # 最近人気の曲Top10を取得
-  # --- ここまで追加 ---
+
+  ### ここでリクエストして、結果を出す！
+  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq"
+  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?limit=10")
+  req = Net::HTTP::Get.new(uri)
+  req['Authorization'] = "Bearer #{token}"
+
+  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+
+  puts "=== Spotify APIレスポンスコード: #{res.code}"
+  puts "=== Spotify APIレスポンスボディ: #{res.body}"
+
+  if res.is_a?(Net::HTTPSuccess)
+    @top_tracks = JSON.parse(res.body)['items']
+  else
+    @top_tracks = []
+  end
 
   erb :'users/show', layout: :'users/layout'
 end
+
 
 get 'error' do
   erb :'users/error.erb', layout: false
