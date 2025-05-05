@@ -5,48 +5,4 @@
   </div>
 <% end %>
 
-<h3 class="mt-4">最近人気の曲 Top10（Spotify Japan）</h3>
-
-<div class="px-3" style="margin-top: 30px;">
-  <div> 
-    <% @top_tracks.each do |item| %>
-      <div class="card mb-4" style="max-width: 720px;">
-        <div class="row g-0 align-items-center flex-nowrap">
-          <!-- 左：画像 -->
-          <div class="col-4">
-            <img src="<%= item["track"]["album"]["images"][0]["url"] %>" class="img-fluid rounded-start w-100" style="height: 100%; object-fit: cover;" alt="album image">
-          </div>
-          <!-- 右：情報 -->
-          <div class="col-8">
-            <div class="card-body p-2">
-              <h6 class="card-title mb-1">曲名: <%= item["track"]["name"] %></h6>
-              <p class="card-text mb-1" style="font-size: 0.9rem;">
-                <% item["track"]["artists"].each do |artist| %>
-                  アーティスト：<%= artist["name"] %><br>
-                <% end %>
-              </p>
-              <div>
-                <input type="hidden" id="track_id" name="track_id" value="<%= item["track"]["id"] %>">
-                <input type="hidden" id="track_name" name="track_name" value="<%= item["track"]["name"] %>">
-                <input type="hidden" id="track_artists" name="track_artists" value="<%= item["track"]["artists"].map { |a| a["name"] }.join(', ') %>">
-              </div>
-              <div class="text-end">
-                <button
-                  class="btn btn-sm btn-primary"
-                  onclick="openPopup(this)"
-                  data-name="<%= item["track"]["name"] %>" 
-                  data-image="<%= item["track"]["album"]["images"][0]["url"] %>" 
-                  data-artists="<%= item["track"]["artists"].map { |artist| artist["name"] }.join(", ") %>"
-                  data-id="<%= item["track"]["id"] %>"
-                  data-form-key="<%= @form.form_key %>"
-                >
-                  リクエスト
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  </div>
-</div>
+<p>検索キーワードを入力してください。</p>

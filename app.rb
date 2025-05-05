@@ -116,9 +116,8 @@ get '/auth' do
   session[:state] = state
   session[:user] = {id: 1, name: "test_user"}
 
-  # 修正後スコープ
-  scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-private'
 
+  scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private'
   query_params = {
     response_type: 'code',
     client_id: settings.client_id,
@@ -129,7 +128,6 @@ get '/auth' do
 
   redirect "https://accounts.spotify.com/authorize?" + URI.encode_www_form(query_params)
 end
-
 
 get '/callback' do
   code = params[:code]
@@ -205,22 +203,6 @@ get '/callback' do
   end
 end
 
-def get_top_tracks(token)
-  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq" # 日本のTop
-  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?limit=10")
-  req = Net::HTTP::Get.new(uri)
-  req['Authorization'] = "Bearer #{token}"
-
-  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-    http.request(req)
-  end
-
-  if res.is_a?(Net::HTTPSuccess)
-    JSON.parse(res.body)['items']
-  else
-    []
-  end
-end
 
 
 get '/' do
@@ -230,7 +212,7 @@ end
 get '/form/:form_key' do
   @form = Form.find_by(form_key: params[:form_key])
   @success_message = session.delete(:success_message)
-
+  
   today_deadline = Date.today - 1
   deadline = @form.deadline.to_date rescue nil
 
@@ -238,33 +220,7 @@ get '/form/:form_key' do
     redirect '/error'
   end
 
-  form_owner = @form.user
-  refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
-
-  token = form_owner.spotify_access_token
-
-  if token.nil? || token.empty?
-    return "エラー: トークンが空です"
-  end
-
-  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq"
-  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?limit=10")
-  req = Net::HTTP::Get.new(uri)
-  req['Authorization'] = "Bearer #{token}"
-
-  begin
-    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
-    if res.is_a?(Net::HTTPSuccess)
-      body = JSON.parse(res.body)
-      # 成功時は、画面に生のJSONをそのまま表示
-      return "<pre>#{JSON.pretty_generate(body)}</pre>"
-    else
-      # エラー時もそのまま画面に表示
-      return "Spotify APIエラー: #{res.code}<br><pre>#{res.body}</pre>"
-    end
-  rescue => e
-    return "リクエスト失敗: #{e.message}"
-  end
+  erb :'users/show', layout: :'users/layout'
 end
 
 get 'error' do
