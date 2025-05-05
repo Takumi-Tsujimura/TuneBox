@@ -203,28 +203,13 @@ get '/callback' do
   end
 end
 
-def clear_playlist(token, playlist_id)
-  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks")
-  
-  req = Net::HTTP::Put.new(uri)
-  req['Authorization'] = "Bearer #{token}"
-  req['Content-Type'] = 'application/json'
-  req.body = { uris: [] }.to_json
-  
-  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
-  
-  if res.is_a?(Net::HTTPSuccess)
-    puts "[INFO] プレイリストをクリアしました"
-    true
-  else
-    puts "[ERROR] プレイリストクリア失敗: #{res.code} #{res.body}"
-    false
-  end
+
+get '/' do
+  erb :home
 end
 
-
 def fetch_top50_tracks(token)
-  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq" # ← Top50 JapanのID
+  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq" # Top50 Japan公式プレイリストID
   uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?limit=50")
 
   req = Net::HTTP::Get.new(uri)
@@ -233,56 +218,11 @@ def fetch_top50_tracks(token)
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
 
   if res.is_a?(Net::HTTPSuccess)
-    JSON.parse(res.body)["items"].map { |item| item["track"]["uri"] }
+    JSON.parse(res.body)["items"].map { |item| item["track"] }
   else
     puts "[ERROR] Top50取得失敗: #{res.code} #{res.body}"
     []
   end
-end
-
-def add_tracks_to_playlist(token, playlist_id, track_uris)
-  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks")
-
-  req = Net::HTTP::Post.new(uri)
-  req['Authorization'] = "Bearer #{token}"
-  req['Content-Type'] = 'application/json'
-  req.body = { uris: track_uris }.to_json
-
-  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
-
-  if res.is_a?(Net::HTTPSuccess)
-    puts "[INFO] プレイリストへの追加成功"
-    true
-  else
-    puts "[ERROR] プレイリストへの追加失敗: #{res.code} #{res.body}"
-    false
-  end
-end
-
-post '/admin/copy_top50' do
-  ensure_valid_token
-  token = session[:access_token]
-  
-  # 取得する
-  top50_tracks = fetch_top50_tracks(token)
-  if top50_tracks.empty?
-    return "Top50の曲が取得できませんでした。"
-  end
-
-  # 追加する
-  my_playlist_id = "39Ps1NByczAnjX5PgHfSxi" # あなたのプレイリストID
-  success = add_tracks_to_playlist(token, my_playlist_id, top50_tracks)
-
-  if success
-    redirect '/admin', notice: 'Top50をコピーしました！'
-  else
-    "コピーに失敗しました。"
-  end
-end
-
-
-get '/' do
-  erb :home
 end
 
 get '/form/:form_key' do
@@ -296,25 +236,17 @@ get '/form/:form_key' do
     redirect '/error'
   end
 
-  # --- Top50コピー処理 ---
   form_owner = @form.user
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
-  
+
   token = form_owner.spotify_access_token
 
-  my_playlist_id = "39Ps1NByczAnjX5PgHfSxi" # ← あなたのプレイリストID
-
-  top50_tracks = fetch_top50_tracks(token)
-
-  unless top50_tracks.empty?
-    clear_playlist(token, my_playlist_id) # ← ここで一度中身を全部消して
-    add_tracks_to_playlist(token, my_playlist_id, top50_tracks) # ← そこにTop50だけ入れる
-  end
+  # --- Top50を取得するだけ ---
+  @top_tracks = fetch_top50_tracks(token)
   # --- ここまで ---
 
   erb :'users/show', layout: :'users/layout'
 end
-
 
 get '/error' do
   erb :'users/error.erb', layout: false
@@ -323,7 +255,7 @@ end
 get '/search/:form_key' do
   @form = Form.find_by(form_key: params[:form_key])
   keyword = params[:keyword]
-  return redirect "/form/\#{params[:form_key]}" if keyword.nil? || keyword.strip.empty?
+  return redirect "/form/#{params[:form_key]}" if keyword.nil? || keyword.strip.empty?
 
   form_owner = @form.user
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
