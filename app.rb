@@ -316,7 +316,7 @@ get '/form/:form_key' do
 end
 
 
-get 'error' do
+get '/error' do
   erb :'users/error.erb', layout: false
 end
 
