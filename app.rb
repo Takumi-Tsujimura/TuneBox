@@ -204,7 +204,7 @@ get '/callback' do
 end
 
 def get_top_tracks(token)
-  uri = URI("https://api.spotify.com/v1/browse/new-releases?country=JP&limit=10")
+  uri = URI("https://api.spotify.com/v1/browse/new-releases?country=JP&limit=20") # limitちょっと多めにしておく
   req = Net::HTTP::Get.new(uri)
   req['Authorization'] = "Bearer #{token}"
 
@@ -216,7 +216,7 @@ def get_top_tracks(token)
 
     albums.each do |album|
       album_id = album["id"]
-      album_images = album["images"] # アルバム画像をここで保存しておく！
+      album_images = album["images"]
 
       # アルバム内の最初の曲だけ取る
       track_uri = URI("https://api.spotify.com/v1/albums/#{album_id}/tracks?limit=1")
@@ -227,19 +227,24 @@ def get_top_tracks(token)
       if track_res.is_a?(Net::HTTPSuccess)
         track_data = JSON.parse(track_res.body)['items'].first
         if track_data
-          # trackにalbumのimagesも追加して渡す！
-          track_data["album"] = { "images" => album_images }
-          tracks << track_data
+          # 日本語フィルターをかける
+          track_name = track_data["name"]
+          artist_names = track_data["artists"].map { |a| a["name"] }.join(" ")
+
+          if track_name =~ /[ぁ-んァ-ン一-龥]/ || artist_names =~ /[ぁ-んァ-ン一-龥]/
+            track_data["album"] = { "images" => album_images }
+            tracks << track_data
+          end
         end
       end
     end
 
-    tracks
+    # 最終的に10曲だけに絞る
+    tracks.first(10)
   else
     []
   end
 end
-
 
 
 get '/' do
