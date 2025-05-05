@@ -216,8 +216,9 @@ def get_top_tracks(token)
 
     albums.each do |album|
       album_id = album["id"]
+      album_images = album["images"] # アルバム画像をここで保存しておく！
 
-      # アルバム内の最初の曲だけを取る
+      # アルバム内の最初の曲だけ取る
       track_uri = URI("https://api.spotify.com/v1/albums/#{album_id}/tracks?limit=1")
       track_req = Net::HTTP::Get.new(track_uri)
       track_req['Authorization'] = "Bearer #{token}"
@@ -225,7 +226,11 @@ def get_top_tracks(token)
       track_res = Net::HTTP.start(track_uri.hostname, track_uri.port, use_ssl: true) { |http| http.request(track_req) }
       if track_res.is_a?(Net::HTTPSuccess)
         track_data = JSON.parse(track_res.body)['items'].first
-        tracks << track_data if track_data
+        if track_data
+          # trackにalbumのimagesも追加して渡す！
+          track_data["album"] = { "images" => album_images }
+          tracks << track_data
+        end
       end
     end
 
@@ -234,6 +239,7 @@ def get_top_tracks(token)
     []
   end
 end
+
 
 
 get '/' do
