@@ -226,7 +226,7 @@ get '/form/:form_key' do
   token = form_owner.spotify_access_token
   
   # --- ここから自分のプレイリストを取得する処理 ---
-  my_playlist_id = "0AHTmPZjFLy4zI1GEHWKc1"  # あなたのプレイリストID
+  my_playlist_id = "37i9dQZEVXbKXQ4mDTEBXq"  
 
   uri = URI("https://api.spotify.com/v1/playlists/#{my_playlist_id}/tracks?limit=50")
   req = Net::HTTP::Get.new(uri)
