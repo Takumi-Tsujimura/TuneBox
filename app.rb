@@ -228,8 +228,6 @@ get '/' do
 end
 
 get '/form/:form_key' do
-  puts "=== formルートに入りました ==="
-
   @form = Form.find_by(form_key: params[:form_key])
   @success_message = session.delete(:success_message)
 
@@ -237,7 +235,6 @@ get '/form/:form_key' do
   deadline = @form.deadline.to_date rescue nil
 
   if deadline && deadline <= today_deadline
-    puts "=== 締切超過でリダイレクト ==="
     redirect '/error'
   end
 
@@ -245,41 +242,30 @@ get '/form/:form_key' do
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
 
   token = form_owner.spotify_access_token
-  puts "=== トークン: #{token} ==="
 
   if token.nil? || token.empty?
-    puts "=== トークンが空です ==="
-    @top_tracks = []
-    return erb :'users/show', layout: :'users/layout'
+    return "エラー: トークンが空です"
   end
 
-  puts "=== トップトラック取得開始 ==="
-  
   playlist_id = "37i9dQZEVXbKXQ4mDTEBXq"
   uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?limit=10")
   req = Net::HTTP::Get.new(uri)
   req['Authorization'] = "Bearer #{token}"
 
   begin
-    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-      http.request(req)
-    end
-    puts "=== Spotify APIレスポンスコード: #{res.code}"
-    puts "=== Spotify APIレスポンスボディ: #{res.body}"
-  
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
     if res.is_a?(Net::HTTPSuccess)
-      @top_tracks = JSON.parse(res.body)['items']
+      body = JSON.parse(res.body)
+      # 成功時は、画面に生のJSONをそのまま表示
+      return "<pre>#{JSON.pretty_generate(body)}</pre>"
     else
-      @top_tracks = []
+      # エラー時もそのまま画面に表示
+      return "Spotify APIエラー: #{res.code}<br><pre>#{res.body}</pre>"
     end
   rescue => e
-    puts "[ERROR] Spotify APIリクエスト失敗: #{e.message}"
-    @top_tracks = []
+    return "リクエスト失敗: #{e.message}"
   end
-
-  erb :'users/show', layout: :'users/layout'
 end
-
 
 get 'error' do
   erb :'users/error.erb', layout: false
