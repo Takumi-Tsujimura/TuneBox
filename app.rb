@@ -212,7 +212,7 @@ end
 get '/form/:form_key' do
   @form = Form.find_by(form_key: params[:form_key])
   @success_message = session.delete(:success_message)
-  
+
   today_deadline = Date.today - 1
   deadline = @form.deadline.to_date rescue nil
 
@@ -220,8 +220,31 @@ get '/form/:form_key' do
     redirect '/error'
   end
 
+  form_owner = @form.user
+  refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
+  
+  token = form_owner.spotify_access_token
+  
+  # --- ここから自分のプレイリストを取得する処理 ---
+  my_playlist_id = "0AHTmPZjFLy4zI1GEHWKc1"  # あなたのプレイリストID
+
+  uri = URI("https://api.spotify.com/v1/playlists/#{my_playlist_id}/tracks?limit=50")
+  req = Net::HTTP::Get.new(uri)
+  req['Authorization'] = "Bearer #{token}"
+
+  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+
+  if res.is_a?(Net::HTTPSuccess)
+    @top_tracks = JSON.parse(res.body)["items"].map { |item| item["track"] }
+  else
+    puts "[ERROR] 自分のプレイリスト取得失敗: #{res.code} #{res.body}"
+    @top_tracks = []
+  end
+  # --- ここまで ---
+
   erb :'users/show', layout: :'users/layout'
 end
+
 
 get 'error' do
   erb :'users/error.erb', layout: false
