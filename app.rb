@@ -204,31 +204,15 @@ get '/callback' do
 end
 
 
+
 get '/' do
   erb :home
-end
-
-def fetch_top50_tracks(token)
-  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq" # Top50 Japan公式プレイリストID
-  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?limit=50")
-
-  req = Net::HTTP::Get.new(uri)
-  req['Authorization'] = "Bearer #{token}"
-
-  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
-
-  if res.is_a?(Net::HTTPSuccess)
-    JSON.parse(res.body)["items"].map { |item| item["track"] }
-  else
-    puts "[ERROR] Top50取得失敗: #{res.code} #{res.body}"
-    []
-  end
 end
 
 get '/form/:form_key' do
   @form = Form.find_by(form_key: params[:form_key])
   @success_message = session.delete(:success_message)
-
+  
   today_deadline = Date.today - 1
   deadline = @form.deadline.to_date rescue nil
 
@@ -236,26 +220,17 @@ get '/form/:form_key' do
     redirect '/error'
   end
 
-  form_owner = @form.user
-  refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
-
-  token = form_owner.spotify_access_token
-
-  # --- Top50を取得するだけ ---
-  @top_tracks = fetch_top50_tracks(token)
-  # --- ここまで ---
-
   erb :'users/show', layout: :'users/layout'
 end
 
-get '/error' do
+get 'error' do
   erb :'users/error.erb', layout: false
 end
 
 get '/search/:form_key' do
   @form = Form.find_by(form_key: params[:form_key])
   keyword = params[:keyword]
-  return redirect "/form/#{params[:form_key]}" if keyword.nil? || keyword.strip.empty?
+  return redirect "/form/\#{params[:form_key]}" if keyword.nil? || keyword.strip.empty?
 
   form_owner = @form.user
   refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
