@@ -203,6 +203,22 @@ get '/callback' do
   end
 end
 
+def get_top_tracks(token)
+  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq" # 日本のTop 50
+  uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?limit=10")
+  req = Net::HTTP::Get.new(uri)
+  req['Authorization'] = "Bearer #{token}"
+
+  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    http.request(req)
+  end
+
+  if res.is_a?(Net::HTTPSuccess)
+    JSON.parse(res.body)['items']
+  else
+    []
+  end
+end
 
 
 get '/' do
@@ -219,6 +235,14 @@ get '/form/:form_key' do
   if deadline && deadline <= today_deadline
     redirect '/error'
   end
+
+  # --- ここから追加：最近人気の曲を取得する処理 ---
+  form_owner = @form.user
+  refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
+
+  token = form_owner.spotify_access_token
+  @top_tracks = get_top_tracks(token) # 最近人気の曲Top10を取得
+  # --- ここまで追加 ---
 
   erb :'users/show', layout: :'users/layout'
 end
