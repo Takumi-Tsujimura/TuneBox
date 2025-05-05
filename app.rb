@@ -203,6 +203,37 @@ get '/callback' do
   end
 end
 
+def get_top_tracks(token)
+  uri = URI("https://api.spotify.com/v1/browse/new-releases?country=JP&limit=10")
+  req = Net::HTTP::Get.new(uri)
+  req['Authorization'] = "Bearer #{token}"
+
+  res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
+
+  if res.is_a?(Net::HTTPSuccess)
+    albums = JSON.parse(res.body)['albums']['items']
+    tracks = []
+
+    albums.each do |album|
+      album_id = album["id"]
+
+      # アルバム内の最初の曲だけを取る
+      track_uri = URI("https://api.spotify.com/v1/albums/#{album_id}/tracks?limit=1")
+      track_req = Net::HTTP::Get.new(track_uri)
+      track_req['Authorization'] = "Bearer #{token}"
+
+      track_res = Net::HTTP.start(track_uri.hostname, track_uri.port, use_ssl: true) { |http| http.request(track_req) }
+      if track_res.is_a?(Net::HTTPSuccess)
+        track_data = JSON.parse(track_res.body)['items'].first
+        tracks << track_data if track_data
+      end
+    end
+
+    tracks
+  else
+    []
+  end
+end
 
 
 get '/' do
@@ -212,7 +243,7 @@ end
 get '/form/:form_key' do
   @form = Form.find_by(form_key: params[:form_key])
   @success_message = session.delete(:success_message)
-  
+
   today_deadline = Date.today - 1
   deadline = @form.deadline.to_date rescue nil
 
@@ -220,8 +251,17 @@ get '/form/:form_key' do
     redirect '/error'
   end
 
+  # --- ここからNew Releases用の追加 ---
+  form_owner = @form.user
+  refresh_user_access_token(form_owner) if form_owner.spotify_expires_at && form_owner.spotify_expires_at < Time.now
+
+  token = form_owner.spotify_access_token
+  @top_tracks = get_top_tracks(token)
+  # --- ここまで追加 ---
+
   erb :'users/show', layout: :'users/layout'
 end
+
 
 get 'error' do
   erb :'users/error.erb', layout: false
