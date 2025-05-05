@@ -116,8 +116,9 @@ get '/auth' do
   session[:state] = state
   session[:user] = {id: 1, name: "test_user"}
 
+  # 修正後スコープ
+  scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private playlist-read-private'
 
-  scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private'
   query_params = {
     response_type: 'code',
     client_id: settings.client_id,
@@ -128,6 +129,7 @@ get '/auth' do
 
   redirect "https://accounts.spotify.com/authorize?" + URI.encode_www_form(query_params)
 end
+
 
 get '/callback' do
   code = params[:code]
@@ -204,7 +206,7 @@ get '/callback' do
 end
 
 def get_top_tracks(token)
-  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq" # 日本のTop 50
+  playlist_id = "37i9dQZEVXbKXQ4mDTEBXq" # 日本のTop
   uri = URI("https://api.spotify.com/v1/playlists/#{playlist_id}/tracks?limit=10")
   req = Net::HTTP::Get.new(uri)
   req['Authorization'] = "Bearer #{token}"
