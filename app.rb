@@ -25,6 +25,8 @@ configure do
   set :redirect_uri, ENV['REDIRECT_URI'] || 'http://localhost:8888/callback'
 end
 
+
+#Auth認証関連
 def refresh_user_access_token(user)
   return if user.spotify_refresh_token.nil?
 
@@ -55,7 +57,6 @@ def refresh_user_access_token(user)
     puts "[ERROR] Spotifyトークンの更新に失敗: #{res.code} #{res.body}"
   end
 end
-
 
 def refresh_access_token
   return if session[:refresh_token].nil?
@@ -93,13 +94,11 @@ def refresh_access_token
   end
 end
 
-
 def ensure_valid_token
   if session[:expires_in] && Time.now > session[:expires_in]
     refresh_access_token
   end
 end
-
 
 def get_user_profile
   ensure_valid_token
@@ -204,7 +203,7 @@ get '/callback' do
 end
 
 
-
+##users
 get '/' do
   erb :home
 end
@@ -362,6 +361,8 @@ post '/submit_request/:form_key' do
   end
 end
 
+
+##admin
 get '/admin' do
   @title = "管理者ページ"
   # @forms = Form.all
@@ -375,6 +376,7 @@ get '/admin' do
   erb :'admin/form_list', layout: :'admin/layout'
 end
 
+#フォーム作成、編集
 get '/form_templates/new' do
   @title = "新規フォーム作成"
   ensure_valid_token  # トークンの有効性を確認・更新
@@ -528,7 +530,6 @@ patch '/forms/:form_key' do
   redirect '/admin'
 end
 
-
 delete '/forms/:form_key' do
   form = Form.find_by(form_key: params[:form_key])
   halt 404, "フォームが見つかりません" unless form
@@ -537,6 +538,7 @@ delete '/forms/:form_key' do
   redirect '/admin'
 end
 
+#フォームの共有(リンク、QR)
 get '/share' do
   @form_key = params[:form_key]
   
@@ -560,6 +562,7 @@ get '/share' do
   erb :'admin/share', layout: false
 end
 
+#ログイン関連
 get '/login_form' do
   @title = "管理者ログイン"
 
@@ -661,6 +664,7 @@ end
 #   "全ユーザーを削除しました"
 # end
 
+#request log
 get '/request_log/:form_key' do
   @title = "リクエストログ"
   
@@ -676,7 +680,6 @@ get '/request_log/:form_key' do
   
   erb :'admin/request_log', layout: :'admin/layout'
 end
-
 
 delete '/forms/:form_key/tracks/:track_id' do
   form_key = params[:form_key]
