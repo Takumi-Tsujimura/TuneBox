@@ -32,6 +32,13 @@
   </header>
   <div class="px-5 py-4">
     <h2>お問い合わせフォーム</h2>
+    <% if @success_message %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= @success_message %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="閉じる"></button>
+      </div>
+    <% end %>
+
     <form action="/contact" method="post">
       <!-- 問い合わせの種類 -->
       <div class="mb-3">

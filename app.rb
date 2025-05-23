@@ -737,6 +737,7 @@ Pony.options = {
 
 # お問い合わせフォーム表示
 get '/contact' do
+  @success_message = session.delete(:success_message)
   erb :contact
 end
 
@@ -793,5 +794,6 @@ post '/contact' do
     BODY
   )
   
-  redirect '/'
+  session[:success_message] = "送信しました"
+  redirect '/contact'
 end
