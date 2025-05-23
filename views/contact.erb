@@ -30,54 +30,69 @@
     <!--</div>-->
     
   </header>
-  <div class="px-5 py-4">
-    <h2>お問い合わせフォーム</h2>
-    <% if @success_message %>
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <%= @success_message %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="閉じる"></button>
-      </div>
-    <% end %>
-
-    <form action="/contact" method="post">
-      <!-- 問い合わせの種類 -->
-      <div class="mb-3">
-        <label class="form-label d-block">問い合わせの種類</label>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="contact_type" id="bug" value="アプリの不具合" required>
-          <label class="form-check-label" for="bug">アプリの不具合</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="contact_type" id="question" value="アプリに関する質問" required>
-          <label class="form-check-label" for="question">アプリに関する質問</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="contact_type" id="other" value="その他" required>
-          <label class="form-check-label" for="other">その他</label>
-        </div>
-      </div>
-      
-      <!-- 氏名 -->
-      <div class="mb-3">
-        <label for="name" class="form-label">氏名</label>
-        <input type="text" class="form-control" id="name" name="name" placeholder="山田 太郎" required>
+  <div class="py-4 px-3 d-flex justify-content-center">
+    <div style="width: 100%; max-width: 700px;">
+      <div class="section-title">
+        <h3>お問い合わせ</h3>
       </div>
   
-      <!-- メールアドレス -->
-      <div class="mb-3">
-        <label for="email" class="form-label">メールアドレス</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="your@example.com" required>
-      </div>
+      <% if @success_message %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <%= @success_message %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="閉じる"></button>
+        </div>
+      <% end %>
   
-      <!-- 問い合わせ内容 -->
-      <div class="mb-3">
-        <label for="message" class="form-label">問い合わせ内容</label>
-        <textarea class="form-control" id="message" name="message" rows="6" placeholder="お問い合わせ内容をご記入ください" required></textarea>
-      </div>
+      <form action="/contact" method="post">
+        <!-- 氏名 -->
+        <div class="row mb-3">
+          <label for="name" class="col-sm-2 col-form-label">氏名</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="name" name="name" placeholder="山田 太郎" required>
+          </div>
+        </div>
   
-      <button type="submit" class="btn btn-primary">送信</button>
-      
-    </form>
+        <!-- メールアドレス -->
+        <div class="row mb-3">
+          <label for="email" class="col-sm-2 col-form-label">メール</label>
+          <div class="col-sm-10">
+            <input type="email" class="form-control" id="email" name="email" placeholder="your@example.com" required>
+          </div>
+        </div>
+  
+        <!-- 問い合わせの種類 -->
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label pt-0">種類</label>
+          <div class="col-sm-10">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="contact_type" id="bug" value="アプリの不具合" required>
+              <label class="form-check-label" for="bug">アプリの不具合</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="contact_type" id="question" value="アプリに関する質問" required>
+              <label class="form-check-label" for="question">アプリに関する質問</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="contact_type" id="other" value="その他" required>
+              <label class="form-check-label" for="other">その他</label>
+            </div>
+          </div>
+        </div>
+  
+        <!-- 内容 -->
+        <div class="row mb-3">
+          <label for="message" class="col-sm-2 col-form-label">内容</label>
+          <div class="col-sm-10">
+            <textarea class="form-control" id="message" name="message" rows="6" placeholder="お問い合わせ内容をご記入ください" required></textarea>
+          </div>
+        </div>
+  
+        <div class="d-flex justify-content-start" style="gap: 8px;">
+          <button type="submit" class="btn btn-primary btn-sm">送信</button>
+          <a href="/" class="btn btn-secondary btn-sm">戻る</a>
+        </div>
+      </form>
+    </div>
   </div>
   </body>
 </html>
