@@ -15,14 +15,32 @@ GEM
     bcrypt (3.1.16)
     chunky_png (1.4.0)
     concurrent-ruby (1.1.9)
+    date (3.4.1)
     dotenv (2.7.6)
     i18n (1.8.11)
       concurrent-ruby (~> 1.0)
+    mail (2.8.1)
+      mini_mime (>= 0.1.1)
+      net-imap
+      net-pop
+      net-smtp
+    mini_mime (1.1.5)
     minitest (5.14.4)
     multi_json (1.15.0)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
+    net-imap (0.5.8)
+      date
+      net-protocol
+    net-pop (0.1.2)
+      net-protocol
+    net-protocol (0.2.2)
+      timeout
+    net-smtp (0.5.1)
+      net-protocol
     pg (1.5.9)
+    pony (1.13.1)
+      mail (>= 2.0)
     rack (2.2.3)
     rack-protection (2.1.0)
       rack
@@ -47,6 +65,7 @@ GEM
       sinatra (= 2.1.0)
       tilt (~> 2.0)
     tilt (2.0.10)
+    timeout (0.4.3)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     webrick (1.7.0)
@@ -61,6 +80,7 @@ DEPENDENCIES
   bcrypt (~> 3.1)
   dotenv (~> 2.7)
   pg (~> 1.4)
+  pony
   rake (~> 13.0)
   rqrcode
   sinatra (~> 2.1)

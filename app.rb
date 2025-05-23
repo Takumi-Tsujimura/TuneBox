@@ -10,6 +10,7 @@ require 'base64'
 require 'dotenv/load'
 require 'cgi'
 require 'rqrcode'
+require 'pony'
 require './models'
 
 enable :sessions
@@ -717,4 +718,80 @@ delete '/forms/:form_key/tracks/:track_id' do
   else
     halt 500, "Spotify APIエラー: #{res.code} - #{res.body}"
   end
+end
+
+#問い合わせ関連
+# Pony の共通設定
+Pony.options = {
+  via: :smtp,
+  via_options: {
+    address:              'smtp.gmail.com',
+    port:                 '587',
+    enable_starttls_auto: true,
+    user_name:            ENV['MAIL_USER'],
+    password:             ENV['MAIL_PASS'],
+    authentication:       :plain,
+    domain:               "localhost.localdomain"
+  }
+}
+
+# お問い合わせフォーム表示
+get '/contact' do
+  erb :contact
+end
+
+# フォーム送信処理
+post '/contact' do
+  name         = params[:name]
+  contact_type = params[:contact_type]
+  user_email   = params[:email]
+  message      = params[:message]
+
+  # 利用者宛メール
+  Pony.mail(
+    to: user_email,
+    from: ENV['MAIL_USER'],
+    subject: '【TuneBox】お問い合わせありがとうございます',
+    body: <<~BODY
+      #{name} 様
+
+      お問い合わせありがとうございます。
+      以下の内容で受け付けました。
+
+      【氏名】
+      #{name}
+
+      【種別】
+      #{contact_type}
+
+      【内容】
+      #{message}
+
+      TuneBox 開発チーム
+    BODY
+  )
+
+  # 管理者宛メール
+  Pony.mail(
+    to: ENV['MAIL_USER'],
+    from: ENV['MAIL_USER'],
+    subject: '【TuneBox】新しいお問い合わせが届きました',
+    body: <<~BODY
+      新しいお問い合わせを受け付けました。
+
+      【氏名】
+      #{name}
+
+      【種別】
+      #{contact_type}
+
+      【送信者メール】
+      #{user_email}
+
+      【内容】
+      #{message}
+    BODY
+  )
+  
+  redirect '/'
 end
