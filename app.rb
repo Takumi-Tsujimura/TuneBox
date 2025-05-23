@@ -399,7 +399,7 @@ get '/form_templates/new' do
       return "エラー: JSON のパースに失敗しました。レスポンス: #{res.body}"
     end
   else
-    return "Spotify API エラー: #{res.code} - #{res.message} - #{res.body}"
+    redirect '/admin'
   end
 
   erb :'admin/create_form', layout: :'admin/layout'
