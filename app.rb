@@ -202,8 +202,33 @@ get '/callback' do
     else
       return "ユーザー登録に失敗しました: #{user.errors.full_messages.join(', ')}"
     end
+  elsif session[:relink_user_id]
+    # 既存ユーザーの再連携処理
+    user = User.find_by(id: session.delete(:relink_user_id))
+
+    if user
+      user.update(
+        spotify_uid: spotify_uid,
+        spotify_access_token: access_token,
+        spotify_refresh_token: refresh_token,
+        spotify_expires_at: expires_at,
+        spotify_display_name: spotify_display_name
+      )
+
+      session[:user_id] = user.id
+      session[:access_token] = access_token
+      session[:refresh_token] = refresh_token
+      session[:expires_in] = expires_at
+
+      send_signup_confirmation_mail(user)
+      redirect '/admin'
+    else
+      session[:notice] = "ユーザーが見つかりません"
+      redirect '/login_form'
+    end
   else
-    redirect '/admin'
+    session[:notice] = "認証対象のユーザーが見つかりませんでした"
+    redirect '/login_form'
   end
 end
 
@@ -667,8 +692,14 @@ get '/signup/spotify_choice' do
 end
 
 post '/auth/spotify/link' do
-  redirect '/login_form' unless session[:signup_params]
-  redirect '/auth'
+   if session[:signup_params]
+    redirect '/auth'
+  elsif session[:user_id]
+    session[:relink_user_id] = session[:user_id]
+    redirect '/auth'
+  else
+    redirect '/login_form'
+  end
 end
 
 get '/signup/skip' do
@@ -709,7 +740,7 @@ def send_signup_confirmation_mail(user)
       アカウントの作成が正常に完了しました。
 
       ■ 登録情報
-      ・Spotifyアカウント: #{user.spotify_display_name || "（未取得）"}
+      ・Spotifyアカウント: #{user.spotify_display_name || "（未連携）"}
       ・メールアドレス: #{user.mail}
 
       このメールに心当たりがない場合は、
