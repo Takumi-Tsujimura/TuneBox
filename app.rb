@@ -202,32 +202,29 @@ get '/callback' do
     else
       return "ユーザー登録に失敗しました: #{user.errors.full_messages.join(', ')}"
     end
-  elsif session[:relink_user_id]
-    # 既存ユーザーの再連携処理
-    user = User.find_by(id: session.delete(:relink_user_id))
-
-    if user
-      user.update(
-        spotify_uid: spotify_uid,
-        spotify_access_token: access_token,
-        spotify_refresh_token: refresh_token,
-        spotify_expires_at: expires_at,
-        spotify_display_name: spotify_display_name
-      )
-
-      session[:user_id] = user.id
-      session[:access_token] = access_token
-      session[:refresh_token] = refresh_token
-      session[:expires_in] = expires_at
-
-      send_signup_confirmation_mail(user)
-      redirect '/admin'
-    else
-      session[:notice] = "ユーザーが見つかりません"
-      redirect '/login_form'
+   elsif session[:user_id]
+    user = User.find_by(id: session[:user_id])
+    if user.nil?
+      session[:notice] = "ユーザー情報が無効です"
+      return redirect '/login_form'
     end
+
+    user.update(
+      spotify_uid: spotify_uid,
+      spotify_access_token: access_token,
+      spotify_refresh_token: refresh_token,
+      spotify_expires_at: expires_at,
+      spotify_display_name: spotify_display_name
+    )
+
+    session[:access_token] = access_token
+    session[:refresh_token] = refresh_token
+    session[:expires_in] = expires_at
+
+    redirect '/admin'
+
   else
-    session[:notice] = "認証対象のユーザーが見つかりませんでした"
+    session[:notice] = "Spotify連携対象のユーザーが見つかりません"
     redirect '/login_form'
   end
 end
@@ -691,15 +688,14 @@ get '/signup/spotify_choice' do
   erb :'admin/spotify_choice', layout: :'admin/layout'
 end
 
-post '/auth/spotify/link' do
-   if session[:signup_params]
-    redirect '/auth'
-  elsif session[:user_id]
-    session[:relink_user_id] = session[:user_id]
-    redirect '/auth'
-  else
-    redirect '/login_form'
-  end
+post '/auth/spotify/link/new' do
+  redirect '/login_form' unless session[:signup_params]
+  redirect '/auth'
+end
+
+post '/auth/spotify/link/reconnect' do
+  redirect '/login_form' unless session[:user_id]
+  redirect '/auth'
 end
 
 get '/signup/skip' do

@@ -9,7 +9,7 @@
     </p>
 
     <% if @current_user && @current_user.spotify_display_name.to_s.strip.empty? %>
-      <form method="POST" action="/auth/spotify/link">
+      <form method="POST" action="/auth/spotify/link/reconnect">
         <button class="btn btn-outline-success btn-sm" type="submit">Spotifyログイン</button>
       </form>
     <% end %>
