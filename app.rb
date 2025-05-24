@@ -172,32 +172,37 @@ get '/callback' do
   spotify_uid = spotify_user['id']
   spotify_display_name = spotify_user['display_name']
 
-  if session[:relink_user_id]
-    user = User.find(session.delete(:relink_user_id))
-  
-    user.update(
-      spotify_uid: spotify_uid,
-      spotify_access_token: access_token,
-      spotify_refresh_token: refresh_token,
-      spotify_expires_at: expires_at,
-      spotify_display_name: spotify_display_name
-    )
-  
-    session[:user_id] = user.id
-  
-    session[:access_token] = access_token
-    session[:refresh_token] = refresh_token
-    session[:expires_in] = expires_at
-  
-    send_signup_confirmation_mail(user)
-  
-    redirect '/admin'
-  else
-    # 万が一セッションがなければログイン画面へ
+  # Spotify連携対象ユーザーをセッションから取得
+  unless session[:user_id]
     session[:notice] = "Spotify連携対象のユーザーが見つかりませんでした"
-    redirect '/login_form'
+    return redirect '/login_form'
   end
+
+  user = User.find_by(id: session[:user_id])
+  unless user
+    session[:notice] = "ユーザー情報が無効です"
+    return redirect '/login_form'
+  end
+
+  user.update(
+    spotify_uid: spotify_uid,
+    spotify_access_token: access_token,
+    spotify_refresh_token: refresh_token,
+    spotify_expires_at: expires_at,
+    spotify_display_name: spotify_display_name
+  )
+
+  # セッション更新
+  session[:access_token] = access_token
+  session[:refresh_token] = refresh_token
+  session[:expires_in] = expires_at
+
+  # メール送信（連携初回または再連携）
+  send_signup_confirmation_mail(user)
+
+  redirect '/admin'
 end
+
 
 ##users
 get '/' do
@@ -664,14 +669,12 @@ get '/signup/spotify_choice' do
 end
 
 post '/auth/spotify/link' do
-  session[:relink_user_id] = session[:user_id]
+  redirect '/login_form' unless session[:user_id]
   redirect '/auth'
 end
 
 get '/signup/skip' do
-  unless session[:user_id]
-    redirect '/login_form'
-  end
+  redirect '/login_form' unless session[:user_id]
 
   user = User.find(session[:user_id])
   send_signup_confirmation_mail(user)
