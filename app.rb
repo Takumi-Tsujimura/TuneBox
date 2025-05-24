@@ -595,14 +595,12 @@ end
 #ログイン関連
 get '/login_form' do
   @title = "管理者ログイン"
-
-  @notice = session.delete(:notice)
   erb :'admin/login_form', layout: :'admin/layout'
 end
 
 get '/signup_form' do
   @title = "新規アカウント作成"
-
+  @notice = session.delete(:notice)
   erb :'admin/signup_form', layout: :'admin/layout'
 end
 
