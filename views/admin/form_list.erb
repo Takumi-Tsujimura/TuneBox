@@ -1,8 +1,18 @@
 <div class="container-fluid mt-4">
   <h2 class="fw-bold border-bottom pb-2" style="margin-left: 30px; padding-left: 30px;">管理者ページ</h2>
 </div>
-<div>
-  <p>Spotify連携中アカウント: <%= @current_user.spotify_display_name || "未連携" %></p>
+<div class="container-fluid mt-3" style="max-width: 800px; margin-left: 3rem;">
+  <div class="d-flex align-items-center gap-3">
+    <div>
+      <span class="badge bg-success text-white px-3 py-2 fs-6">
+        Spotify連携中: <%= @current_user.spotify_display_name || "未連携" %>
+      </span>
+    </div>
+
+    <form method="POST" action="/auth/spotify/relink">
+      <button class="btn btn-outline-secondary btn-sm" type="submit">アカウントを再連携</button>
+    </form>
+  </div>
 </div>
 
 <!-- 上部操作 -->
