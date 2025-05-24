@@ -182,6 +182,10 @@ get '/callback' do
       spotify_expires_at: expires_at,
       spotify_display_name: spotify_display_name
     )
+    
+    unless success
+      puts "[ERROR] Spotify連携の更新に失敗: #{user.errors.full_messages.join(', ')}"
+    end
 
     session[:access_token] = access_token
     session[:refresh_token] = refresh_token

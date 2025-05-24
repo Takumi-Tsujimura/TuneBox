@@ -5,8 +5,14 @@
   <div class="d-flex align-items-center gap-3">
     <p class="m-0 text-muted">
       Spotify連携中アカウント: 
-      <strong><%= @current_user.spotify_display_name || "未連携" %></strong>
+      <strong><%= @current_user&.spotify_display_name.presence || "未連携" %></strong>
     </p>
+
+    <% if @current_user && @current_user.spotify_display_name.to_s.strip.empty? %>
+      <form method="POST" action="/auth/spotify/link">
+        <button class="btn btn-outline-success btn-sm" type="submit">Spotifyログイン</button>
+      </form>
+    <% end %>
   </div>
 </div>
 
