@@ -174,7 +174,7 @@ get '/callback' do
 
   if session[:relink_user_id]
     user = User.find(session.delete(:relink_user_id))
-
+  
     user.update(
       spotify_uid: spotify_uid,
       spotify_access_token: access_token,
@@ -182,13 +182,15 @@ get '/callback' do
       spotify_expires_at: expires_at,
       spotify_display_name: spotify_display_name
     )
-
+  
+    session[:user_id] = user.id
+  
     session[:access_token] = access_token
     session[:refresh_token] = refresh_token
     session[:expires_in] = expires_at
-    
+  
     send_signup_confirmation_mail(user)
-
+  
     redirect '/admin'
   else
     # 万が一セッションがなければログイン画面へ
