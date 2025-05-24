@@ -366,7 +366,7 @@ get '/admin' do
     redirect '/login_form'
   end
   
-  @current_user = User.find(session[:user_id])
+  @current_user = User.find(session[:user_id]).reload
   @forms = Form.where(user_id: session[:user_id])
   erb :'admin/form_list', layout: :'admin/layout'
 end
