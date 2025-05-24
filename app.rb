@@ -123,7 +123,8 @@ get '/auth' do
     client_id: settings.client_id,
     scope: scope,
     redirect_uri: settings.redirect_uri,
-    state: state
+    state: state,
+    show_dialog: true
   }
 
   redirect "https://accounts.spotify.com/authorize?" + URI.encode_www_form(query_params)
@@ -137,7 +138,7 @@ get '/callback' do
   # アクセストークン取得
   uri = URI('https://accounts.spotify.com/api/token')
   auth_header = "Basic #{Base64.strict_encode64("#{settings.client_id}:#{settings.client_secret}")}"
-  
+
   req = Net::HTTP::Post.new(uri)
   req['Authorization'] = auth_header
   req['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -146,17 +147,15 @@ get '/callback' do
     code: code,
     redirect_uri: settings.redirect_uri
   )
-  
+
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
-  
+
   unless res.is_a?(Net::HTTPSuccess)
     puts "[ERROR] トークン取得失敗: #{res.code} #{res.body}"
     return redirect '/?error=token_fetch_failed'
   end
-  
+
   token_data = JSON.parse(res.body)
-  puts "[DEBUG] トークン取得成功: #{token_data}"
-  
   access_token = token_data['access_token']
   refresh_token = token_data['refresh_token']
   expires_at = Time.now + token_data['expires_in'].to_i
@@ -169,19 +168,14 @@ get '/callback' do
 
   return redirect '/' unless profile_res.is_a?(Net::HTTPSuccess)
   spotify_user = JSON.parse(profile_res.body)
+
   spotify_uid = spotify_user['id']
   spotify_display_name = spotify_user['display_name']
 
-  # 新規登録処理（セッションに signup_params があるとき）
-  if session[:signup_params]
-    signup = session.delete(:signup_params)
+  if session[:relink_user_id]
+    user = User.find(session.delete(:relink_user_id))
 
-    user = User.new(
-      first_name: signup[:first_name],
-      last_name: signup[:last_name],
-      nick_name: signup[:nick_name],
-      mail: signup[:mail],
-      password: signup[:password],
+    user.update(
       spotify_uid: spotify_uid,
       spotify_access_token: access_token,
       spotify_refresh_token: refresh_token,
@@ -189,38 +183,19 @@ get '/callback' do
       spotify_display_name: spotify_display_name
     )
 
-    if user.save
-      session[:user_id] = user.id
-
-      session[:access_token] = access_token
-      session[:refresh_token] = refresh_token
-      session[:expires_in] = expires_at
-
-      redirect '/login_form'
-    else
-      return "ユーザー登録に失敗しました: #{user.errors.full_messages.join(', ')}"
-    end
-  elsif session[:relink_user_id]
-    user = User.find(session.delete(:relink_user_id))
-  
-    user.update(
-      spotify_uid: spotify_uid,
-      spotify_access_token: access_token,
-      spotify_refresh_token: refresh_token,
-      spotify_expires_at: expires_at,
-      spotify_display_name: spotify_user['display_name']
-    )
-  
     session[:access_token] = access_token
     session[:refresh_token] = refresh_token
     session[:expires_in] = expires_at
-  
+    
+    send_signup_confirmation_mail(user)
+
     redirect '/admin'
   else
-    redirect '/admin'
+    # 万が一セッションがなければログイン画面へ
+    session[:notice] = "Spotify連携対象のユーザーが見つかりませんでした"
+    redirect '/login_form'
   end
 end
-
 
 ##users
 get '/' do
@@ -663,16 +638,70 @@ post '/auth_signup' do
     session[:notice] = "このメールアドレスは既に登録されています。"
     redirect '/signup_form'
   end
-  
-  session[:signup_params] = {
+
+  user = User.new(
     first_name: params[:first_name],
     last_name: params[:last_name],
     nick_name: params[:nick_name],
     mail: params[:mail],
     password: params[:password]
-  }
+  )
 
+  if user.save
+    session[:user_id] = user.id
+    redirect '/signup/spotify_choice'
+  else
+    session[:notice] = user.errors.full_messages.join(', ')
+    redirect '/signup_form'
+  end
+end
+
+get '/signup/spotify_choice' do
+  redirect '/login_form' unless session[:user_id]  
+  erb :'admin/spotify_choice', layout: :'admin/layout'
+end
+
+post '/auth/spotify/link' do
+  session[:relink_user_id] = session[:user_id]
   redirect '/auth'
+end
+
+get '/signup/skip' do
+  unless session[:user_id]
+    redirect '/login_form'
+  end
+
+  user = User.find(session[:user_id])
+  send_signup_confirmation_mail(user)
+
+  redirect '/login_form'
+end
+
+def send_signup_confirmation_mail(user)
+  Pony.mail(
+    to: user.mail,
+    from: ENV['MAIL_USER'],
+    subject: '【TuneBox】アカウント作成が完了しました',
+    body: <<~BODY
+      #{user.nick_name || user.first_name} 様
+
+      TuneBoxへのご登録ありがとうございます。
+      アカウントの作成が正常に完了しました。
+
+      ■ 登録情報
+      ・Spotifyアカウント: #{user.spotify_display_name || "（未取得）"}
+      ・メールアドレス: #{user.mail}
+
+      このメールに心当たりがない場合は、
+      お手数ですが、このメールに返信をお願いいたします。
+      登録内容に問題があると感じた場合は、
+      サポートまでご連絡ください。
+
+      今後ともTuneBoxをよろしくお願いいたします。
+
+      TuneBox 開発チーム
+    BODY
+  )
 end
 
 delete '/user_delete' do
