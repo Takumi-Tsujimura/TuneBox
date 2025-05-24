@@ -656,7 +656,7 @@ post '/auth_signup' do
     password: params[:password]
   }
 
-  redirect '/signup/spotify/choice'
+  redirect '/signup/spotify_choice'
 end
 
 get '/signup/spotify_choice' do
