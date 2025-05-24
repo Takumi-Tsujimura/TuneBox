@@ -660,12 +660,12 @@ post '/auth_signup' do
 end
 
 get '/signup/spotify_choice' do
-  redirect '/login_form' unless session[:user_id]  
+  redirect '/login_form' unless session[:signup_params]  
   erb :'admin/spotify_choice', layout: :'admin/layout'
 end
 
 post '/auth/spotify/link' do
-  redirect '/login_form' unless session[:user_id]
+  redirect '/login_form' unless session[:signup_params]
   redirect '/auth'
 end
 
