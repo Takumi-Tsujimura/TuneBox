@@ -8,9 +8,9 @@
       <strong><%= @current_user.spotify_display_name || "未連携" %></strong>
     </p>
 
-    <form method="POST" action="/auth/spotify/relink">
-      <button class="btn btn-outline-secondary btn-sm" type="submit">アカウントを再連携</button>
-    </form>
+    <a href="https://accounts.spotify.com/logout" target="_blank" class="btn btn-outline-secondary btn-sm">
+      アカウントを再連携
+    </a>
   </div>
 </div>
 
