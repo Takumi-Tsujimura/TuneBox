@@ -184,7 +184,8 @@ get '/callback' do
       spotify_uid: spotify_uid,
       spotify_access_token: access_token,
       spotify_refresh_token: refresh_token,
-      spotify_expires_at: expires_at
+      spotify_expires_at: expires_at,
+      spotify_display_name: spotify_display_name
     )
 
     if user.save
@@ -373,6 +374,7 @@ get '/admin' do
     redirect '/login_form'
   end
   
+  @current_user = User.find(session[:user_id])
   @forms = Form.where(user_id: session[:user_id])
   erb :'admin/form_list', layout: :'admin/layout'
 end

@@ -1,6 +1,9 @@
 <div class="container-fluid mt-4">
   <h2 class="fw-bold border-bottom pb-2" style="margin-left: 30px; padding-left: 30px;">管理者ページ</h2>
 </div>
+<div>
+  <p>Spotify連携中アカウント: <%= @current_user.spotify_display_name || "未連携" %></p>
+</div>
 
 <!-- 上部操作 -->
 <div class="container-fluid mt-4">
