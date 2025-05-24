@@ -216,13 +216,6 @@ get '/callback' do
       spotify_expires_at: expires_at,
       spotify_display_name: spotify_display_name
     )
-    
-    if success
-      puts "[INFO] Spotify情報の更新成功 for user_id=#{user.id}"
-      puts "[INFO] display_name=#{user.spotify_display_name}, uid=#{user.spotify_uid}"
-    else
-      puts "[ERROR] Spotify情報の更新失敗: #{user.errors.full_messages.join(', ')}"
-    end
 
     session[:access_token] = access_token
     session[:refresh_token] = refresh_token
@@ -408,6 +401,14 @@ get '/admin' do
   
   @current_user = User.find(session[:user_id]).reload
   @forms = Form.where(user_id: session[:user_id])
+  
+  puts "[INFO] 管理者ページアクセス - ユーザーID: #{@current_user.id}"
+  puts "  - spotify_uid: #{@current_user.spotify_uid}"
+  puts "  - spotify_display_name: #{@current_user.spotify_display_name}"
+  puts "  - access_token: #{@current_user.spotify_access_token&.slice(0, 6)}...(省略)"
+  puts "  - refresh_token: #{@current_user.spotify_refresh_token&.slice(0, 6)}...(省略)"
+  puts "  - expires_at: #{@current_user.spotify_expires_at}"
+
   erb :'admin/form_list', layout: :'admin/layout'
 end
 
