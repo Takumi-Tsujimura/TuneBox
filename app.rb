@@ -199,6 +199,21 @@ get '/callback' do
     else
       return "ユーザー登録に失敗しました: #{user.errors.full_messages.join(', ')}"
     end
+  elsif session[:relink_user_id]
+    user = User.find(session.delete(:relink_user_id))
+    user.update(
+      spotify_uid: spotify_uid,
+      spotify_access_token: access_token,
+      spotify_refresh_token: refresh_token,
+      spotify_expires_at: expires_at,
+      spotify_display_name: spotify_user['display_name']
+    )
+  
+    session[:access_token] = access_token
+    session[:refresh_token] = refresh_token
+    session[:expires_in] = expires_at
+  
+    redirect '/admin'
   else
     redirect '/admin'
   end
@@ -377,6 +392,16 @@ get '/admin' do
   @current_user = User.find(session[:user_id])
   @forms = Form.where(user_id: session[:user_id])
   erb :'admin/form_list', layout: :'admin/layout'
+end
+
+post '/auth/spotify/relink' do
+  unless session[:user_id]
+    redirect '/login_form'
+  end
+
+  # 再連携対象を記録
+  session[:relink_user_id] = session[:user_id]
+  redirect '/auth'  # Spotify認証ページへ
 end
 
 #フォーム作成、編集
