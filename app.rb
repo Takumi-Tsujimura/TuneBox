@@ -170,6 +170,7 @@ get '/callback' do
   return redirect '/' unless profile_res.is_a?(Net::HTTPSuccess)
   spotify_user = JSON.parse(profile_res.body)
   spotify_uid = spotify_user['id']
+  spotify_display_name = spotify_user['display_name']
 
   # 新規登録処理（セッションに signup_params があるとき）
   if session[:signup_params]
