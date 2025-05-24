@@ -195,7 +195,9 @@ get '/callback' do
       session[:access_token] = access_token
       session[:refresh_token] = refresh_token
       session[:expires_in] = expires_at
-
+      
+      send_signup_confirmation_mail(user)
+      
       redirect '/login_form'
     else
       return "ユーザー登録に失敗しました: #{user.errors.full_messages.join(', ')}"
@@ -670,12 +672,29 @@ post '/auth/spotify/link' do
 end
 
 get '/signup/skip' do
-  redirect '/login_form' unless session[:user_id]
+  unless session[:signup_params]
+    redirect '/login_form'
+  end
 
-  user = User.find(session[:user_id])
-  send_signup_confirmation_mail(user)
+  signup = session.delete(:signup_params)
 
-  redirect '/login_form'
+  user = User.new(
+    first_name: signup[:first_name],
+    last_name: signup[:last_name],
+    nick_name: signup[:nick_name],
+    mail: signup[:mail],
+    password: signup[:password]
+    # Spotify情報は入れない
+  )
+
+  if user.save
+    session[:user_id] = user.id
+    send_signup_confirmation_mail(user)
+    redirect '/login_form'
+  else
+    session[:notice] = user.errors.full_messages.join(', ')
+    redirect '/signup_form'
+  end
 end
 
 def send_signup_confirmation_mail(user)
