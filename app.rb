@@ -202,30 +202,8 @@ get '/callback' do
     else
       return "ユーザー登録に失敗しました: #{user.errors.full_messages.join(', ')}"
     end
-  elsif session[:user_id]
-    user = User.find_by(id: session[:user_id])
-    if user.nil?
-      session[:notice] = "ユーザー情報が無効です"
-      return redirect '/login_form'
-    end
-
-    user.update(
-      spotify_uid: spotify_uid,
-      spotify_access_token: access_token,
-      spotify_refresh_token: refresh_token,
-      spotify_expires_at: expires_at,
-      spotify_display_name: spotify_display_name
-    )
-
-    session[:access_token] = access_token
-    session[:refresh_token] = refresh_token
-    session[:expires_in] = expires_at
-
-    redirect '/admin'
-
   else
-    session[:notice] = "Spotify連携対象のユーザーが見つかりません"
-    redirect '/login_form'
+    redirect '/admin'
   end
 end
 
