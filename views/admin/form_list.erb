@@ -2,20 +2,12 @@
   <h2 class="fw-bold border-bottom pb-2" style="margin-left: 30px; padding-left: 30px;">管理者ページ</h2>
 </div>
 <div class="container-fluid mt-3" style="max-width: 800px; margin-left: 3rem;">
-  <% if @current_user.spotify_uid.nil? %>
-    <div class="d-flex align-items-center gap-3">
-      <p class="m-0 text-muted">
-        Spotify連携中アカウント: <strong>未連携</strong>
-      </p>
-      <form method="POST" action="/auth/spotify/link">
-        <button class="btn btn-outline-success btn-sm" type="submit">Spotifyログイン</button>
-      </form>
-    </div>
-  <% else %>
+  <div class="d-flex align-items-center gap-3">
     <p class="m-0 text-muted">
-      Spotify連携中アカウント: <strong><%= @current_user.spotify_display_name %></strong>
+      Spotify連携中アカウント: 
+      <strong><%= @current_user.spotify_display_name || "未連携" %></strong>
     </p>
-  <% end %>
+  </div>
 </div>
 
 <!-- 上部操作 -->
