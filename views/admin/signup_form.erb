@@ -2,6 +2,13 @@
   <div class="section-title">
     <h3>新規登録</h3>
   </div>
+  <div>
+    <% if @notice %>
+      <div class="alert alert-danger">
+        <%= @notice %>
+      </div>
+    <% end %>
+  </div>
   <form method="POST" action="/auth_signup">
     <div class="row mb-3">
       <div class="col">

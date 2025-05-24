@@ -608,6 +608,7 @@ end
 
 get "/user/edit" do
   @title = "アカウント情報 編集"
+  @notice = session.delete(:notice) 
   
   @user = User.find(session[:user_id])
   erb :'admin/user_edit_form', layout: :'admin/layout'
@@ -659,6 +660,12 @@ patch '/user/edit/:id' do
 end
 
 post '/auth_signup' do
+  existing_user = User.find_by(mail: params[:mail])
+  if existing_user
+    session[:notice] = "このメールアドレスは既に登録されています。"
+    redirect '/signup_form'
+  end
+  
   session[:signup_params] = {
     first_name: params[:first_name],
     last_name: params[:last_name],
