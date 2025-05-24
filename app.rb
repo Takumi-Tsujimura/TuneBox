@@ -399,16 +399,9 @@ get '/admin' do
     redirect '/login_form'
   end
   
-  @current_user = User.find(session[:user_id]).reload
+  @current_user = User.find(session[:user_id])
   @forms = Form.where(user_id: session[:user_id])
   
-  puts "[INFO] 管理者ページアクセス - ユーザーID: #{@current_user.id}"
-  puts "  - spotify_uid: #{@current_user.spotify_uid}"
-  puts "  - spotify_display_name: #{@current_user.spotify_display_name}"
-  puts "  - access_token: #{@current_user.spotify_access_token&.slice(0, 6)}...(省略)"
-  puts "  - refresh_token: #{@current_user.spotify_refresh_token&.slice(0, 6)}...(省略)"
-  puts "  - expires_at: #{@current_user.spotify_expires_at}"
-
   erb :'admin/form_list', layout: :'admin/layout'
 end
 
