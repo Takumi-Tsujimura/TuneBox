@@ -202,7 +202,7 @@ get '/callback' do
     else
       return "ユーザー登録に失敗しました: #{user.errors.full_messages.join(', ')}"
     end
-   elsif session[:user_id]
+  elsif session[:user_id]
     user = User.find_by(id: session[:user_id])
     if user.nil?
       session[:notice] = "ユーザー情報が無効です"
@@ -216,6 +216,13 @@ get '/callback' do
       spotify_expires_at: expires_at,
       spotify_display_name: spotify_display_name
     )
+    
+    if success
+      puts "[INFO] Spotify情報の更新成功 for user_id=#{user.id}"
+      puts "[INFO] display_name=#{user.spotify_display_name}, uid=#{user.spotify_uid}"
+    else
+      puts "[ERROR] Spotify情報の更新失敗: #{user.errors.full_messages.join(', ')}"
+    end
 
     session[:access_token] = access_token
     session[:refresh_token] = refresh_token
