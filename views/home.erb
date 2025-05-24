@@ -13,25 +13,26 @@
 </head>
 
 <body>
-  <header class="d-flex align-items-center justify-content-between">
+  <header class="d-flex align-items-center justify-content-between flex-wrap p-3">
     <!-- 左側：アイコン＋アプリ名 -->
     <div class="d-flex align-items-center">
-      <img src="/img/TuneBox_icon.png" alt="アプリアイコン" class="app-icon">
+      <img src="/img/TuneBox_icon.png" alt="アプリアイコン" class="app-icon me-2">
       <h1 class="h3 mb-0">TuneBox</h1>
     </div>
-
-    <!-- 右側：ログイン・新規登録ボタン -->
-    <div class="auth-buttons">
+  
+    <!-- 右側：ログイン・新規登録・問い合わせ -->
+    <div class="auth-buttons d-flex gap-2 mt-2 mt-sm-0">
       <% if session[:user_id] %>
         <a href="/admin" class="header-button">マイページ</a>
         <a href="/contact" class="header-button">問い合わせ</a>
       <% else %>
         <a href="/login_form" class="header-button">ログイン</a>
-        <a href="/signup_form" class="header-button">新規登録</a>
+        <a href="/signup_form" class="header-button d-none d-sm-inline">新規登録</a>
         <a href="/contact" class="header-button">問い合わせ</a>
       <% end %>
     </div>
   </header>
+
   <section class="header-background">
     <img src="/img/TuneBox_icon2.png" alt="アプリアイコン" class="section-icon mb-4">
     <h5 class="mb-4">あなたの選曲が、会場を盛り上げる</h5>
