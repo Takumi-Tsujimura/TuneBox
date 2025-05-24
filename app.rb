@@ -604,6 +604,7 @@ end
 #ログイン関連
 get '/login_form' do
   @title = "管理者ログイン"
+  @notice = session.delete(:notice)
   erb :'admin/login_form', layout: :'admin/layout'
 end
 
