@@ -201,6 +201,7 @@ get '/callback' do
     end
   elsif session[:relink_user_id]
     user = User.find(session.delete(:relink_user_id))
+  
     user.update(
       spotify_uid: spotify_uid,
       spotify_access_token: access_token,
