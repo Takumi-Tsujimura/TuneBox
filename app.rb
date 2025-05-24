@@ -116,7 +116,6 @@ get '/auth' do
   session[:state] = state
   session[:user] = {id: 1, name: "test_user"}
 
-
   scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private'
   query_params = {
     response_type: 'code',
@@ -138,7 +137,7 @@ get '/callback' do
   # アクセストークン取得
   uri = URI('https://accounts.spotify.com/api/token')
   auth_header = "Basic #{Base64.strict_encode64("#{settings.client_id}:#{settings.client_secret}")}"
-
+  
   req = Net::HTTP::Post.new(uri)
   req['Authorization'] = auth_header
   req['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -147,15 +146,17 @@ get '/callback' do
     code: code,
     redirect_uri: settings.redirect_uri
   )
-
+  
   res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) { |http| http.request(req) }
-
+  
   unless res.is_a?(Net::HTTPSuccess)
     puts "[ERROR] トークン取得失敗: #{res.code} #{res.body}"
     return redirect '/?error=token_fetch_failed'
   end
-
+  
   token_data = JSON.parse(res.body)
+  puts "[DEBUG] トークン取得成功: #{token_data}"
+  
   access_token = token_data['access_token']
   refresh_token = token_data['refresh_token']
   expires_at = Time.now + token_data['expires_in'].to_i
@@ -168,39 +169,40 @@ get '/callback' do
 
   return redirect '/' unless profile_res.is_a?(Net::HTTPSuccess)
   spotify_user = JSON.parse(profile_res.body)
-
   spotify_uid = spotify_user['id']
   spotify_display_name = spotify_user['display_name']
 
-  # Spotify連携対象ユーザーをセッションから取得
-  unless session[:user_id]
-    session[:notice] = "Spotify連携対象のユーザーが見つかりませんでした"
-    return redirect '/login_form'
+  # 新規登録処理（セッションに signup_params があるとき）
+  if session[:signup_params]
+    signup = session.delete(:signup_params)
+
+    user = User.new(
+      first_name: signup[:first_name],
+      last_name: signup[:last_name],
+      nick_name: signup[:nick_name],
+      mail: signup[:mail],
+      password: signup[:password],
+      spotify_uid: spotify_uid,
+      spotify_access_token: access_token,
+      spotify_refresh_token: refresh_token,
+      spotify_expires_at: expires_at,
+      spotify_display_name: spotify_display_name
+    )
+
+    if user.save
+      session[:user_id] = user.id
+
+      session[:access_token] = access_token
+      session[:refresh_token] = refresh_token
+      session[:expires_in] = expires_at
+
+      redirect '/login_form'
+    else
+      return "ユーザー登録に失敗しました: #{user.errors.full_messages.join(', ')}"
+    end
+  else
+    redirect '/admin'
   end
-
-  user = User.find_by(id: session[:user_id])
-  unless user
-    session[:notice] = "ユーザー情報が無効です"
-    return redirect '/login_form'
-  end
-
-  user.update(
-    spotify_uid: spotify_uid,
-    spotify_access_token: access_token,
-    spotify_refresh_token: refresh_token,
-    spotify_expires_at: expires_at,
-    spotify_display_name: spotify_display_name
-  )
-
-  # セッション更新
-  session[:access_token] = access_token
-  session[:refresh_token] = refresh_token
-  session[:expires_in] = expires_at
-
-  # メール送信（連携初回または再連携）
-  send_signup_confirmation_mail(user)
-
-  redirect '/admin'
 end
 
 
@@ -646,21 +648,15 @@ post '/auth_signup' do
     redirect '/signup_form'
   end
 
-  user = User.new(
+  session[:signup_params] = {
     first_name: params[:first_name],
     last_name: params[:last_name],
     nick_name: params[:nick_name],
     mail: params[:mail],
     password: params[:password]
-  )
+  }
 
-  if user.save
-    session[:user_id] = user.id
-    redirect '/signup/spotify_choice'
-  else
-    session[:notice] = user.errors.full_messages.join(', ')
-    redirect '/signup_form'
-  end
+  redirect '/signup/spotify/choice'
 end
 
 get '/signup/spotify_choice' do
