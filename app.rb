@@ -675,6 +675,8 @@ end
 
 post '/auth/spotify/link/reconnect' do
   redirect '/login_form' unless session[:user_id]
+  
+  
   redirect '/auth'
 end
 

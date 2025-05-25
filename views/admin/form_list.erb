@@ -1,10 +1,10 @@
 <div class="container-fluid mt-4">
-  <h2 class="fw-bold border-bottom pb-2 text-center">管理者ページ</h2>
+  <h2 class="fw-bold border-bottom pb-2" style="padding-left: 30px;">管理者ページ</h2>
 </div>
 
 <div class="container-fluid mt-3">
   <div class="mx-auto" style="max-width: 800px;">
-    <div class="d-flex align-items-center gap-3 flex-wrap">
+    <div class="d-flex align-items-center gap-3">
       <p class="m-0 text-muted">
         Spotify連携中アカウント: 
         <strong><%= @current_user&.spotify_display_name.presence || "未連携" %></strong>
@@ -29,8 +29,8 @@
 </div>
 
 <!-- ハンバーガーメニュー -->
-<div class="text-center">
-  <button id="menuButton" class="btn btn-outline-secondary mt-4">☰</button>
+<div class="text-center mt-5">
+  <button id="menuButton" class="btn btn-outline-secondary">☰</button>
 </div>
 
 <div id="menu" class="mx-auto mt-3" style="max-width: 800px;">
