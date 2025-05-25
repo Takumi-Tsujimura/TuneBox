@@ -1,24 +1,27 @@
 <div class="container-fluid mt-4">
-  <h2 class="fw-bold border-bottom pb-2" style="margin-left: 30px; padding-left: 30px;">管理者ページ</h2>
+  <h2 class="fw-bold border-bottom pb-2 text-center">管理者ページ</h2>
 </div>
-<div class="container-fluid mt-3" style="max-width: 800px; margin-left: 3rem;">
-  <div class="d-flex align-items-center gap-3">
-    <p class="m-0 text-muted">
-      Spotify連携中アカウント: 
-      <strong><%= @current_user&.spotify_display_name.presence || "未連携" %></strong>
-    </p>
 
-    <% if @current_user && @current_user.spotify_display_name.to_s.strip.empty? %>
-      <form method="POST" action="/auth/spotify/link/reconnect">
-        <button class="btn btn-outline-success btn-sm" type="submit">Spotifyログイン</button>
-      </form>
-    <% end %>
+<div class="container-fluid mt-3">
+  <div class="mx-auto" style="max-width: 800px;">
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <p class="m-0 text-muted">
+        Spotify連携中アカウント: 
+        <strong><%= @current_user&.spotify_display_name.presence || "未連携" %></strong>
+      </p>
+
+      <% if @current_user && @current_user.spotify_display_name.to_s.strip.empty? %>
+        <form method="POST" action="/auth/spotify/link/reconnect">
+          <button class="btn btn-outline-success btn-sm" type="submit">Spotifyログイン</button>
+        </form>
+      <% end %>
+    </div>
   </div>
 </div>
 
 <!-- 上部操作 -->
 <div class="container-fluid mt-4">
-  <div style="max-width: 800px; margin-left: 3rem;">
+  <div class="mx-auto" style="max-width: 800px;">
     <form method="GET" action="/form_templates/new">
       <button type="submit" class="btn btn-success">新規作成</button>
     </form>
@@ -26,9 +29,11 @@
 </div>
 
 <!-- ハンバーガーメニュー -->
-<button id="menuButton" class="btn btn-outline-secondary" style="margin-top: 70px;">☰</button>
+<div class="text-center">
+  <button id="menuButton" class="btn btn-outline-secondary mt-4">☰</button>
+</div>
 
-<div id="menu">
+<div id="menu" class="mx-auto mt-3" style="max-width: 800px;">
   <h5 class="mb-3 border-bottom pb-2">メニュー</h5>
   <form method="GET" action="/user/edit" class="mb-2">
     <button type="submit" class="btn btn-primary w-100">ユーザー設定編集</button>
@@ -45,7 +50,7 @@
 
 <!-- フォームリスト（カード） -->
 <div class="container-fluid my-4">
-  <div class="row row-cols-1 row-cols-md-1 g-4 justify-content-start" style="max-width: 800px; margin-left: 1rem;">
+  <div class="row row-cols-1 row-cols-md-1 g-4 justify-content-center mx-auto" style="max-width: 800px;">
     <% @forms.each do |form| %>
       <% today_deadline = Time.new(Time.now.year, Time.now.month, Time.now.day) %>
       <div class="col">
