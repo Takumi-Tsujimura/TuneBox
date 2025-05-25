@@ -410,16 +410,6 @@ get '/admin' do
   erb :'admin/form_list', layout: :'admin/layout'
 end
 
-post '/auth/spotify/relink' do
-  unless session[:user_id]
-    redirect '/login_form'
-  end
-
-  # 再連携対象を記録
-  session[:relink_user_id] = session[:user_id]
-  redirect '/auth'  # Spotify認証ページへ
-end
-
 #フォーム作成、編集
 get '/form_templates/new' do
   @title = "新規フォーム作成"
