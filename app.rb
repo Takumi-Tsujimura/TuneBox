@@ -739,7 +739,7 @@ def send_signup_confirmation_mail(user)
     from: ENV['MAIL_USER'],
     subject: '【TuneBox】アカウント作成が完了しました',
     body: <<~BODY
-      #{user.nick_name || user.first_name} 様
+      #{user.last_name} #{user.first_name}様
 
       TuneBoxへのご登録ありがとうございます。
       アカウントの作成が正常に完了しました。
