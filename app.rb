@@ -1,10 +1,6 @@
 require 'bundler/setup'
 Bundler.require
 require 'sinatra/reloader' if development?
-
-require 'active_support/time'  
-Time.zone = 'Asia/Tokyo'        
-
 require 'securerandom'
 require 'uri'
 require 'json'
