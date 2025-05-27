@@ -693,9 +693,8 @@ patch '/user/change_password' do
   user.save
 
   session[:notice] = "パスワードを変更しました。"
-  redirect '/user/edit'
+  redirect '/admin'
 end
-
 
 post '/auth_signup' do
   existing_user = User.find_by(mail: params[:mail])
