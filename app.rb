@@ -618,7 +618,9 @@ get "/user/edit" do
 end
 
 get '/user/change_password' do
-  redirect '/login_form' unless current_user
+  if session[:user_id].nil?
+    redirect '/login_form'
+  end
   @notice = session.delete(:notice)
   
   erb :'admin/change_password_form', layout: :'admin/layout'
@@ -671,9 +673,11 @@ end
 
 patch '/user/change_password' do
   # ログインしているか確認
-  redirect '/login_form' unless current_user
+  if session[:user_id].nil?
+    redirect '/login_form'
+  end
 
-  user = current_user
+  user = User.find(session[:user_id])
 
   unless BCrypt::Password.new(user.password_digest) == params[:current_password]
     session[:notice] = "現在のパスワードが正しくありません。"
@@ -691,6 +695,7 @@ patch '/user/change_password' do
   session[:notice] = "パスワードを変更しました。"
   redirect '/user/edit'
 end
+
 
 post '/auth_signup' do
   existing_user = User.find_by(mail: params[:mail])
