@@ -694,9 +694,14 @@ patch '/user/change_password' do
     redirect '/user/change_password_form'
   end
   
-  user.password_digest = BCrypt::Password.create(params[:new_password])
-  user.save
+  user.password = params[:new_password]
 
+  unless user.save
+    puts user.errors.full_messages.inspect
+    session[:notice] = "パスワードの保存に失敗しました。"
+    redirect '/user/change_password_form'
+  end
+  
   session[:notice] = "パスワードを変更しました。"
   redirect '/user/change_password_form'
 end
