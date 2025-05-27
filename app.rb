@@ -617,6 +617,13 @@ get "/user/edit" do
   erb :'admin/user_edit_form', layout: :'admin/layout'
 end
 
+get '/user/change_password' do
+  redirect '/login_form' unless current_user
+  @notice = session.delete(:notice)
+  
+  erb :'admin/change_password_form', layout: :'admin/layout'
+end
+
 post '/login' do
   user = User.find_by(mail: params[:mail])
 
@@ -660,6 +667,29 @@ patch '/user/edit/:id' do
     session[:notice] = "更新に失敗しました"
     redirect '/user/edit'
   end
+end
+
+patch '/user/change_password' do
+  # ログインしているか確認
+  redirect '/login_form' unless current_user
+
+  user = current_user
+
+  unless BCrypt::Password.new(user.password_digest) == params[:current_password]
+    session[:notice] = "現在のパスワードが正しくありません。"
+    redirect '/user/change_password'
+  end
+
+  unless params[:new_password] == params[:confirm_password]
+    session[:notice] = "新しいパスワードが一致しません。"
+    redirect '/user/change_password'
+  end
+
+  user.password_digest = BCrypt::Password.create(params[:new_password])
+  user.save
+
+  session[:notice] = "パスワードを変更しました。"
+  redirect '/user/edit'
 end
 
 post '/auth_signup' do

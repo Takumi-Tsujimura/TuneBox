@@ -37,30 +37,17 @@
       <div class="mb-4">
         <label for="password" class="form-label">パスワード</label>
         <div class="input-group">
-          <input type="password" class="form-control" id="password" name="password" value="<%= @user.password %>">
+          <input type="password" class="form-control" id="password" name="password" value="">
           <button type="button" id="togglePassword" style="background: none; border: none; padding-left: 10px;">
             <i class="bi bi-eye"></i>
           </button>
         </div>
       </div>
-
-
-       <div class="d-flex justify-content-start gap-2">
+      
+      <div class="d-flex justify-content-start gap-2">
         <button type="submit" class="btn btn-primary">保存</button>
         <a href="/admin" class="btn btn-secondary">戻る</a>
       </div>
     </form>
   </div>
 </div>
-
-<script>
-  const toggleBtn = document.getElementById('togglePassword');
-  const passwordInput = document.getElementById('password');
-
-  toggleBtn.addEventListener('click', () => {
-    const isPassword = passwordInput.type === 'password';
-    passwordInput.type = isPassword ? 'text' : 'password';
-    toggleBtn.innerHTML = isPassword ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
-  });
-</script>
-
