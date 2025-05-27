@@ -36,7 +36,7 @@
 
       <div class="mb-4">
         <label for="password" class="form-label">パスワード</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="変更する場合のみ入力" autocomplete="new-password">
+        <input type="password" class="form-control" id="password" name="password" value="<%= @user.password %>" autocomplete="new-password">
       </div>
 
        <div class="d-flex justify-content-start gap-2">
