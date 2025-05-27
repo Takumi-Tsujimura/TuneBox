@@ -14,7 +14,10 @@
           <div class="mb-2">
             <strong>日時:</strong> <%= r.created_at.in_time_zone.strftime("%Y-%m-%d %H:%M") %>
           </div>
-
+          
+          <p>UTC: <%= r.created_at %></p>
+          <p>JST: <%= r.created_at.in_time_zone.strftime("%Y-%m-%d %H:%M:%S") %></p>
+          
           <div><strong>曲名:</strong> <%= r.track_name %></div>
           <div><strong>アーティスト:</strong> <%= r.track_artists %></div>
           <div><strong>トラックID:</strong> <%= r.track_id %></div>
