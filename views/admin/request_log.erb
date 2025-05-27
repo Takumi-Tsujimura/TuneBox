@@ -12,7 +12,7 @@
       <% @requests.each do |r| %>
         <div class="list-group-item mb-3 shadow-sm rounded">
           <div class="mb-2">
-            <strong>日時:</strong> <%= r.created_at.strftime("%Y-%m-%d %H:%M") %>
+            <strong>日時:</strong> <%= r.created_at.in_time_zone.strftime("%Y-%m-%d %H:%M") %>
           </div>
 
           <div><strong>曲名:</strong> <%= r.track_name %></div>
