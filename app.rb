@@ -617,7 +617,7 @@ get "/user/edit" do
   erb :'admin/user_edit_form', layout: :'admin/layout'
 end
 
-get '/user/change_password' do
+get '/user/change_password_form' do
   if session[:user_id].nil?
     redirect '/login_form'
   end
@@ -672,7 +672,7 @@ patch '/user/edit/:id' do
 end
 
 patch '/user/change_password' do
-  # ログインしているか確認
+
   if session[:user_id].nil?
     redirect '/login_form'
   end
@@ -693,7 +693,7 @@ patch '/user/change_password' do
   user.save
 
   session[:notice] = "パスワードを変更しました。"
-  redirect '/admin'
+  redirect '/user/change_password_form'
 end
 
 post '/auth_signup' do
