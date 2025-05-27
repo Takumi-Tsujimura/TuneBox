@@ -681,14 +681,19 @@ patch '/user/change_password' do
 
   unless BCrypt::Password.new(user.password_digest) == params[:current_password]
     session[:notice] = "現在のパスワードが正しくありません。"
-    redirect '/user/change_password'
+    redirect '/user/change_password_form'
   end
 
   unless params[:new_password] == params[:confirm_password]
     session[:notice] = "新しいパスワードが一致しません。"
-    redirect '/user/change_password'
+    redirect '/user/change_password_form' 
   end
-
+  
+  if BCrypt::Password.new(user.password_digest) == params[:new_password]
+    session[:notice] = "前回とは違うパスワードを設定してください。"
+    redirect '/user/change_password_form'
+  end
+  
   user.password_digest = BCrypt::Password.create(params[:new_password])
   user.save
 
