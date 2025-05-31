@@ -402,6 +402,7 @@ get '/admin' do
   
   if session[:user_id].nil?
     redirect '/login_form'
+    return
   end
   
   @current_user = User.find(session[:user_id])
