@@ -6,11 +6,10 @@ development:
 production:
   adapter: postgresql
   encoding: unicode
-  database: s_original_27yl
-  host: dpg-d09l6m3e5dus73bpqnq0-a
-  username: s_original_27yl_user
-  password: heNTN2O5YFry6PgIKSF9GFkeNFkFJe8C
-
+  database: s_original_k8dy
+  host: dpg-d1a19qmmcj7s73f27ktg-a
+  username: s_original_k8dy_user
+  password: iHKdqW7WuF3gAKczkW9fN09rtAiu2jgs
 default_env: &default
   adapter: postgresql
   encoding: unicode
