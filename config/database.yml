@@ -10,6 +10,7 @@ production:
   host: dpg-d1a19qmmcj7s73f27ktg-a
   username: s_original_k8dy_user
   password: iHKdqW7WuF3gAKczkW9fN09rtAiu2jgs
+  
 default_env: &default
   adapter: postgresql
   encoding: unicode
