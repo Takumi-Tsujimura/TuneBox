@@ -11,7 +11,7 @@ development:
 production:
   adapter: postgresql
   encoding: unicode
-  database: s_original_k8dy
-  host: dpg-d1a19qmmcj7s73f27ktg-a
-  username: s_original_k8dy_user
-  password: iHKdqW7WuF3gAKczkW9fN09rtAiu2jgs
+  database: s_original_rzo1
+  host: dpg-d1kar93e5dus73ea454g-a
+  username: s_original_rzo1_user
+  password: MdP5jaXW817CmgbjDEGm4N5NG8tJHZxU
